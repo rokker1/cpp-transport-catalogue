@@ -35,8 +35,8 @@ private:
 
 std::ostream& operator<<(std::ostream& out, const BusInfo& info);
 std::ostream& operator<<(std::ostream& out, const StopInfo& info);
-void PrintBusInfo(const BusInfo& info, std::ostream& os);
-void PrintStopInfo(const StopInfo& info, std::ostream& os);    
+void PrintBusInfo(string_view bus, const BusInfo& info, std::ostream& os);
+void PrintStopInfo(string_view stop, const StopInfo& info, std::ostream& os);    
 void ProcessRequests(std::istream& is, std::ostream& os, Transport_catalogue& catalogue);
 } // namespace stat_reader
 

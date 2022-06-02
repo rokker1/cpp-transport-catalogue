@@ -56,10 +56,7 @@ private:
     AddBusQuery ParseBusInputQuery(string_view text);
 
     AddStopQuery ParseStopInput(string_view text);
-    
-    // текст передается по ссылке, т.к. метод Pasrsedistance() модифицирует входной аргумент!
-    // text.remove_prefix(1);
-    // text.remove_prefix(std::min(next_sep_pos, text.size()));
+
     std::tuple<string_view, int> ParseDistance(string_view& text);
 };        
 } // namespace input_reader

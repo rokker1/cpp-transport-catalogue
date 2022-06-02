@@ -35,10 +35,10 @@ std::istream& operator>>(std::istream& is, Request& request) {
     string req_text = str.substr(req_begin);
     
     if(operation == "Bus") {
-        request = std::move(Request{RequestType::GET_BUS_INFO, req_text, ""});
+        request = Request{RequestType::GET_BUS_INFO, req_text, ""};
         return is;
     } else if(operation == "Stop") {
-        request = std::move(Request{RequestType::GET_STOP_INFO, "", req_text});
+        request = Request{RequestType::GET_STOP_INFO, "", req_text};
         return is;
     } else {
         return is;
@@ -49,28 +49,29 @@ const std::deque<Request>& Stat_reader::GetAllRequests() {
     return requests_;
 }
 
-void PrintBusInfo(const BusInfo& info, std::ostream& os) {
-    os << info;
+void PrintBusInfo(string_view bus, const BusInfo& info, std::ostream& os) {
+    os << "Bus " << bus << ": " << info << std::endl;
 }
-void PrintStopInfo(const StopInfo& info, std::ostream& os) {
-    os << info;
+void PrintStopInfo(string_view stop, const StopInfo& info, std::ostream& os) {
+    os << "Stop " << stop << ": " << info << std::endl;
 }
 void ProcessRequests(std::istream& is, std::ostream& os, Transport_catalogue& catalogue) {
     int request_count;
     Request request;
 
     is >> request_count;
-
+    std::string nullstring;
+    getline(is, nullstring);
     for (int i = 0; i < request_count; ++i)
     {
         is >> request;
         switch (request.type)
         {
         case RequestType::GET_BUS_INFO:
-            PrintBusInfo(catalogue.GetBusInfo(request.bus), os);
+            PrintBusInfo(request.bus, catalogue.GetBusInfo(request.bus), os);
             break;
         case RequestType::GET_STOP_INFO:
-            PrintStopInfo(catalogue.GetStopInfo(request.stop), os);
+            PrintStopInfo(request.stop, catalogue.GetStopInfo(request.stop), os);
             break;
 
         default:

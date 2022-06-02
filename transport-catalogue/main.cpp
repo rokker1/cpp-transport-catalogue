@@ -44,8 +44,8 @@ int main () {
     Transport_catalogue transport_catalogue;
 
     ReadInput(std::cin, transport_catalogue);
-    // ProcessRequests(std::cin, std::cout, transport_catalogue);
-    std::string str;
+    ProcessRequests(std::cin, std::cout, transport_catalogue);
+  /* std::string str;
     Stat_reader request_reader;
     int request_count = 0;
     cin >> request_count;
@@ -65,6 +65,6 @@ int main () {
         } else {
             ;
         }
-    }
+    }*/
     //cout << "ok" << endl;
 }
