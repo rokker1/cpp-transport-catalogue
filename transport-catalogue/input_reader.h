@@ -42,22 +42,22 @@ struct AddBusQuery {
 };
 
 class Input_reader {
-    std::deque<AddStopQuery> input__add_stop_queries__;
-    std::deque<AddBusQuery> input__add_bus_queries__;
+    std::deque<AddStopQuery> input_add_stop_queries_;
+    std::deque<AddBusQuery> input_add_bus_queries_;
 
 public:
-    void Add_input_query(std::istream& is);
+    void AddInputQuery(std::istream& is);
 
-    const std::deque<AddStopQuery>& Get_add_stop_queries() const;
+    const std::deque<AddStopQuery>& GetStopInputQueries() const;
 
-    const std::deque<AddBusQuery>& Get_add_bus_queries() const;
+    const std::deque<AddBusQuery>& GetBusInputQueries() const;
 
 private:
-    AddBusQuery Parse_add_bus_query(string_view text);
+    AddBusQuery ParseBusInputQuery(string_view text);
 
-    AddStopQuery Parse_Add_Stop_Query(string_view text);
+    AddStopQuery ParseStopInput(string_view text);
 
-    std::tuple<string_view, int> Parse_distance(string_view& text);
+    std::tuple<string_view, int> ParseDistance(string_view text);
 };        
 } // namespace input_reader
 } // namespace transport

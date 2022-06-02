@@ -4,48 +4,57 @@
 #include "stat_reader.h"
 #include "transport_catalogue.h"
 #include "geo.h"
+#include <sstream>
+
+void ReadInput(std::istream& in, transport::catalogue::Transport_catalogue& catalogue) {
+       
+    using namespace transport::catalogue;
+    using namespace transport::input_reader;
+    using namespace transport::stat_reader; 
+    Input_reader reader;
+    int query_count;
+    std::string str;
+
+    in >> query_count;
+    getline(in, str);
+    for(int i = 0; i < query_count; ++i) {
+        reader.AddInputQuery(in);
+    }
+
+    auto stop_queries = reader.GetStopInputQueries();
+    for(const auto& [name, coordinates, _] : stop_queries) {
+        catalogue.AddStop(name, coordinates.lat, coordinates.lng);
+    }
+    for(const auto& [name, _, distances] : stop_queries) {
+        catalogue.AddDistances(name, distances);
+    }
+    //transport_catalogue.PrintIntervals();
+
+    auto bus_queries = reader.GetBusInputQueries();
+    for(const auto& [name, stops, type] : bus_queries) {
+        catalogue.AddBus(name, stops, type);
+    }
+}
 
 int main () {
     using namespace std;
     using namespace transport::catalogue;
     using namespace transport::input_reader;
     using namespace transport::stat_reader;
-    int query_count;
-    string str;
-
-    cin >> query_count;
-    getline(cin, str);
-
     Transport_catalogue transport_catalogue;
-    Input_reader input_reader;
-    for(int i = 0; i < query_count; ++i) {
-        input_reader.Add_input_query(cin);
-    }
 
-    auto stop_queries = input_reader.Get_add_stop_queries();
-    for(const auto& [name, coordinates, _] : stop_queries) {
-        transport_catalogue.AddStop(name, coordinates.lat, coordinates.lng);
-    }
-    for(const auto& [name, _, distances] : stop_queries) {
-        transport_catalogue.AddDistances(name, distances);
-    }
-    //transport_catalogue.PrintIntervals();
+    ReadInput(std::cin, transport_catalogue);
 
-    auto bus_queries = input_reader.Get_add_bus_queries();
-    for(const auto& [name, stops, type] : bus_queries) {
-        transport_catalogue.AddBus(name, stops, type);
-    }
-
-
+    std::string str;
     Stat_reader request_reader;
     int request_count = 0;
     cin >> request_count;
     getline(cin, str);
     for(int i = 0; i < request_count; ++i) {
-        request_reader.Add_request(cin);
+        request_reader.AddRequest(cin);
     }
 
-    for(const auto& request : request_reader.Get_all_reqs())
+    for(const auto& request : request_reader.GetAllRequests())
     {
         if(request.type == RequestType::GET_BUS_INFO) {
             auto info = transport_catalogue.GetBusInfo(request.bus);

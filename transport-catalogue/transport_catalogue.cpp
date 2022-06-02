@@ -15,12 +15,13 @@ void Transport_catalogue::AddBus(string_view name, const vector<string>& stops, 
         }
         
     });
-    busname_to_bus_[name] = &(*it);
+    busname_to_bus_[string_view{it->name_}] = &(*it);
 }
 
 void Transport_catalogue::AddStop(string_view name, double lat, double lng) {
     auto it = all_stops_.emplace(all_stops_.end(), std::move(Stop{string(name), Coordinates{lat, lng}}));
-    stopname_to_stop_[name] = &(*it);
+    
+    stopname_to_stop_[string_view{it->name_}] = &(*it);
 }
 
 const Stop* Transport_catalogue::FindStop(std::string_view name) const {
@@ -40,12 +41,12 @@ const Bus* Transport_catalogue::FindBus(std::string_view name) const {
 }
 
 BusInfo Transport_catalogue::GetBusInfo(string_view name) {
-    if(busname_to_businfo__.count(name) == 0) {
+    if(busname_to_businfo_.count(name) == 0) {
         // статистики нет в базе
-        return Compute_bus_info(name);
+        return ComputeBusInfo(name);
     } else {
         // статистика уже есть в базе
-        return *(busname_to_businfo__.at(name));
+        return *(busname_to_businfo_.at(name));
     }
 }
 
@@ -68,55 +69,55 @@ void Transport_catalogue::AddDistances(string_view name, const std::unordered_ma
     const Stop* stop_from = FindStop(name); // откуда
     for(const auto&[stop_to_name, distance] : distances) {
         const Stop* stop_to = FindStop(stop_to_name); // куда
-        intervals_to_distance__[{stop_from, stop_to}] = distance;
+        intervals_to_distance_[{stop_from, stop_to}] = distance;
         // маршрут в обратную сторону еще не задавался
         // или задается расстояние к одной и той же остановке
-        if(intervals_to_distance__.count({stop_to, stop_from}) == 0
+        if(intervals_to_distance_.count({stop_to, stop_from}) == 0
             || stop_from == stop_to) { 
             // значит, что длина маршрута в обе стороны равна
-            intervals_to_distance__[{stop_to, stop_from}] = distance;
+            intervals_to_distance_[{stop_to, stop_from}] = distance;
         }
     }        
 }
 
-void Transport_catalogue::Set_distance(std::pair<const Stop*, const Stop*> p, double d) {
-    intervals_to_distance__[p] = d;
+void Transport_catalogue::SetDistance(std::pair<const Stop*, const Stop*> p, double d) {
+    intervals_to_distance_[p] = d;
     // маршрут в обратную сторону еще не задавался
     // или задается расстояние к одной и той же остановке
-    if(intervals_to_distance__.count({p.second, p.first}) == 0
+    if(intervals_to_distance_.count({p.second, p.first}) == 0
         || p.first == p.second) { 
         // значит, что длина маршрута в обе стороны равна
-        intervals_to_distance__[p] = d;
+        intervals_to_distance_[p] = d;
     }
 }
 
-uint64_t Transport_catalogue::Get_distance(std::pair<const Stop*, const Stop*> p) const {
-    if(intervals_to_distance__.count(p)) {
-        return intervals_to_distance__.at(p);
+uint64_t Transport_catalogue::GetDistance(std::pair<const Stop*, const Stop*> p) const {
+    if(intervals_to_distance_.count(p)) {
+        return intervals_to_distance_.at(p);
     } else {
         return 0u;
     }
 }
 
-BusInfo Transport_catalogue::Compute_bus_info(string_view name) {
+BusInfo Transport_catalogue::ComputeBusInfo(string_view name) {
     const Bus* bus{nullptr}; //указатель на автобус в деке
-    unsigned int R = 0, U = 0;
-    double L_geo = 0;
-    uint64_t L_road = 0;
-    double C = 0.0;
+    unsigned int stops_count = 0, unique_stops_count = 0;
+    double length_geo = 0;
+    uint64_t length_road = 0;
+    double curvature = 0.0;
     if(bus = FindBus(name), bus) {
         // такой автобус существует
         //bus = FindBus(name);
-        R = bus->stops_.size();
+        stops_count = bus->stops_.size();
 
         std::unordered_set<string_view, std::hash<string_view>, std::equal_to<string_view>> unique_stops;
         for_each(bus->stops_.begin(), bus->stops_.end(), [&unique_stops](const Stop* stop){
             //std::cout << "Debug. \"" << stop->name_ << "\"." << std::endl;
             unique_stops.insert(string_view(stop->name_));
         });
-        U = unique_stops.size();
+        unique_stops_count = unique_stops.size();
         
-        L_geo = std::transform_reduce(
+        length_geo = std::transform_reduce(
             next(bus->stops_.begin()), bus->stops_.end(),
             bus->stops_.begin(),
             0.0,
@@ -127,16 +128,16 @@ BusInfo Transport_catalogue::Compute_bus_info(string_view name) {
             }
         );
 
-        L_road = std::transform_reduce(
+        length_road = std::transform_reduce(
             next(bus->stops_.begin()), bus->stops_.end(),
             bus->stops_.begin(),
             0ULL,
             std::plus<>(),
             [this, &bus](const Stop* s, const Stop* prev_s){
                 if(bus->bus_type_ == BusType::CYCLED) {
-                    return Get_distance({prev_s, s});
+                    return GetDistance({prev_s, s});
                 } else if(bus->bus_type_ == BusType::ORDINARY) {
-                    return Get_distance({prev_s, s}) + Get_distance({s, prev_s});
+                    return GetDistance({prev_s, s}) + GetDistance({s, prev_s});
                 } else {
                     uint64_t c = 0;
                     return c;
@@ -146,15 +147,15 @@ BusInfo Transport_catalogue::Compute_bus_info(string_view name) {
         );
 
         if(bus->bus_type_ == BusType::ORDINARY) { 
-            L_geo *= 2;
-            R = R * 2 - 1; 
+            length_geo *= 2;
+            stops_count = stops_count * 2 - 1; 
         } //у обычного маршрута расстояние умножается на два
 
-        C = static_cast<long double>(L_road) / static_cast<long double>(L_geo);
+        curvature = static_cast<long double>(length_road) / static_cast<long double>(length_geo);
 
         // запишем рассчитанную информацию в базу
-        auto it = bus_infos__.insert(bus_infos__.end(), std::move(BusInfo{R, U, L_road, C}));
-        busname_to_businfo__[name] = &*it;
+        auto it = bus_infos_.insert(bus_infos_.end(), std::move(BusInfo{stops_count, unique_stops_count, length_road, curvature}));
+        busname_to_businfo_[name] = &*it;
         // возвращаем рассчитанный объект со статистикой
         return *it;
     } else {

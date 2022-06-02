@@ -96,19 +96,19 @@ private:
     std::deque<Bus> buses_;
     std::unordered_map<std::string_view, const Bus*> busname_to_bus_;
 
-    std::deque<BusInfo> bus_infos__;
-    std::unordered_map<std::string_view, const BusInfo*> busname_to_businfo__;
+    std::deque<BusInfo> bus_infos_;
+    std::unordered_map<std::string_view, const BusInfo*> busname_to_businfo_;
 
     std::unordered_map<const Stop*, std::set<string_view>> stops_to_buses_; // v.1
     
     //контейнер длин между остановками
-    std::unordered_map<std::pair<const Stop*, const Stop*>, double, RouteDistanceHasher> intervals_to_distance__;
+    std::unordered_map<std::pair<const Stop*, const Stop*>, double, RouteDistanceHasher> intervals_to_distance_;
     
-    uint64_t Get_distance(std::pair<const Stop*, const Stop*> p) const;
+    uint64_t GetDistance(std::pair<const Stop*, const Stop*> p) const;
     
-    BusInfo Compute_bus_info(string_view name);
+    BusInfo ComputeBusInfo(string_view name);
 
-    void Set_distance(std::pair<const Stop*, const Stop*> p, double d);
+    void SetDistance(std::pair<const Stop*, const Stop*> p, double d);
 };        
 } // namespace catalogue
 

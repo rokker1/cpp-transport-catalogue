@@ -4,7 +4,7 @@ namespace transport
 {
 namespace input_reader
 {
-void Input_reader::Add_input_query(std::istream& is) {
+void Input_reader::AddInputQuery(std::istream& is) {
     string str;
     getline(is, str);
 
@@ -14,23 +14,23 @@ void Input_reader::Add_input_query(std::istream& is) {
     size_t query_begin = str.find_first_not_of(" ", space_pos);
     string query_text = str.substr(query_begin);
     if(operation == "Bus") {
-        input__add_bus_queries__.emplace_back(std::move(Parse_add_bus_query(query_text)));
+        input_add_bus_queries_.emplace_back(std::move(ParseBusInputQuery(query_text)));
     } else if(operation == "Stop") {
-        input__add_stop_queries__.emplace_back(std::move(Parse_Add_Stop_Query(query_text)));
+        input_add_stop_queries_.emplace_back(std::move(ParseStopInput(query_text)));
     } else {
         return;
     }
 }
 
-const std::deque<AddStopQuery>& Input_reader::Get_add_stop_queries() const {
-    return input__add_stop_queries__;
+const std::deque<AddStopQuery>& Input_reader::GetStopInputQueries() const {
+    return input_add_stop_queries_;
 }
 
-const std::deque<AddBusQuery>& Input_reader::Get_add_bus_queries() const {
-    return input__add_bus_queries__;
+const std::deque<AddBusQuery>& Input_reader::GetBusInputQueries() const {
+    return input_add_bus_queries_;
 }
 
-AddBusQuery Input_reader::Parse_add_bus_query(string_view text) {
+AddBusQuery Input_reader::ParseBusInputQuery(string_view text) {
     AddBusQuery query;
 
     size_t semicol_pos = text.find(':');
@@ -60,7 +60,7 @@ AddBusQuery Input_reader::Parse_add_bus_query(string_view text) {
     return query;
 }
 
-AddStopQuery Input_reader::Parse_Add_Stop_Query(string_view text) {
+AddStopQuery Input_reader::ParseStopInput(string_view text) {
     AddStopQuery query;
     size_t semicol_pos = text.find(':');
     
@@ -78,14 +78,14 @@ AddStopQuery Input_reader::Parse_Add_Stop_Query(string_view text) {
     text.remove_prefix(std::min(text.size(), text.find(',', lng_pos)));
 
     while(!text.empty()) {
-        auto [stop_name, distance_to] = Parse_distance(text);
+        auto [stop_name, distance_to] = ParseDistance(text);
         query.distances__.insert(std::move(std::pair<string, int>{string(stop_name), distance_to}));
     }
 
     return query;
 }
 
-std::tuple<string_view, int> Input_reader::Parse_distance(string_view& text) {
+std::tuple<string_view, int> Input_reader::ParseDistance(string_view text) {
     text.remove_prefix(1);
     size_t next_sep_pos = text.find(',');
     int distance = std::stoi(string(text.substr(0, next_sep_pos)));

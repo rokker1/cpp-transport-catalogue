@@ -5,7 +5,7 @@ namespace transport
 namespace stat_reader
 {
 
-void Stat_reader::Add_request(std::istream& is) {
+void Stat_reader::AddRequest(std::istream& is) {
     string str;
     getline(is, str);
 
@@ -16,16 +16,16 @@ void Stat_reader::Add_request(std::istream& is) {
     string req_text = str.substr(req_begin);
     
     if(operation == "Bus") {
-        requests___.emplace_back(std::move(Request{RequestType::GET_BUS_INFO, req_text, ""}));
+        requests_.emplace_back(std::move(Request{RequestType::GET_BUS_INFO, req_text, ""}));
     } else if(operation == "Stop") {
-        requests___.emplace_back(std::move(Request{RequestType::GET_STOP_INFO, "", req_text}));
+        requests_.emplace_back(std::move(Request{RequestType::GET_STOP_INFO, "", req_text}));
     } else {
         return;
     }
 }
 
-const std::deque<Request>& Stat_reader::Get_all_reqs() {
-    return requests___;
+const std::deque<Request>& Stat_reader::GetAllRequests() {
+    return requests_;
 }
 
 std::ostream& operator<<(std::ostream& out, const BusInfo& info) {

@@ -24,11 +24,11 @@ struct Request
 };
 class Stat_reader {
 public:
-    void Add_request(std::istream& is);
+    void AddRequest(std::istream& is);
 
-    const std::deque<Request>& Get_all_reqs();
+    const std::deque<Request>& GetAllRequests();
 private:
-    std::deque<Request> requests___;
+    std::deque<Request> requests_;
 };
 
 std::ostream& operator<<(std::ostream& out, const BusInfo& info);
