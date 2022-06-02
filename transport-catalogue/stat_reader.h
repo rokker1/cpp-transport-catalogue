@@ -27,13 +27,17 @@ public:
     void AddRequest(std::istream& is);
 
     const std::deque<Request>& GetAllRequests();
+
+    
 private:
     std::deque<Request> requests_;
 };
 
 std::ostream& operator<<(std::ostream& out, const BusInfo& info);
 std::ostream& operator<<(std::ostream& out, const StopInfo& info);
-    
+void PrintBusInfo(const BusInfo& info, std::ostream& os);
+void PrintStopInfo(const StopInfo& info, std::ostream& os);    
+void ProcessRequests(std::istream& is, std::ostream& os, Transport_catalogue& catalogue);
 } // namespace stat_reader
 
 } // namespace transport

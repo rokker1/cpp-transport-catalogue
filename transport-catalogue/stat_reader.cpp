@@ -24,8 +24,59 @@ void Stat_reader::AddRequest(std::istream& is) {
     }
 }
 
+std::istream& operator>>(std::istream& is, Request& request) {
+    string str;
+    getline(is, str);
+
+    size_t space_pos = str.find(" ");
+    string_view operation = str.substr(0, space_pos);
+
+    size_t req_begin = str.find_first_not_of(" ", space_pos);
+    string req_text = str.substr(req_begin);
+    
+    if(operation == "Bus") {
+        request = std::move(Request{RequestType::GET_BUS_INFO, req_text, ""});
+        return is;
+    } else if(operation == "Stop") {
+        request = std::move(Request{RequestType::GET_STOP_INFO, "", req_text});
+        return is;
+    } else {
+        return is;
+    }
+}
+
 const std::deque<Request>& Stat_reader::GetAllRequests() {
     return requests_;
+}
+
+void PrintBusInfo(const BusInfo& info, std::ostream& os) {
+    os << info;
+}
+void PrintStopInfo(const StopInfo& info, std::ostream& os) {
+    os << info;
+}
+void ProcessRequests(std::istream& is, std::ostream& os, Transport_catalogue& catalogue) {
+    int request_count;
+    Request request;
+
+    is >> request_count;
+
+    for (int i = 0; i < request_count; ++i)
+    {
+        is >> request;
+        switch (request.type)
+        {
+        case RequestType::GET_BUS_INFO:
+            PrintBusInfo(catalogue.GetBusInfo(request.bus), os);
+            break;
+        case RequestType::GET_STOP_INFO:
+            PrintStopInfo(catalogue.GetStopInfo(request.stop), os);
+            break;
+
+        default:
+            break;
+        }
+    }
 }
 
 std::ostream& operator<<(std::ostream& out, const BusInfo& info) {
