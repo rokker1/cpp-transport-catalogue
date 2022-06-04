@@ -61,29 +61,14 @@ StopInfo Transport_catalogue::GetStopInfo(string_view stop_name) {
     }
 }
 
-void Transport_catalogue::AddDistances(string_view name, const std::unordered_map<std::string, int>& distances) {
-    const Stop* stop_from = FindStop(name); // откуда
-    for(const auto&[stop_to_name, distance] : distances) {
-        const Stop* stop_to = FindStop(stop_to_name); // куда
-        intervals_to_distance_[{stop_from, stop_to}] = distance;
-        // маршрут в обратную сторону еще не задавался
-        // или задается расстояние к одной и той же остановке
-        if(intervals_to_distance_.count({stop_to, stop_from}) == 0
-            || stop_from == stop_to) { 
-            // значит, что длина маршрута в обе стороны равна
-            intervals_to_distance_[{stop_to, stop_from}] = distance;
-        }
-    }        
-}
-
-void Transport_catalogue::SetDistance(std::pair<const Stop*, const Stop*> p, double d) {
-    intervals_to_distance_[p] = d;
+void Transport_catalogue::SetDistance(std::pair<const Stop*, const Stop*> p, uint64_t distance) {
+    intervals_to_distance_[p] = distance;
     // маршрут в обратную сторону еще не задавался
     // или задается расстояние к одной и той же остановке
     if(intervals_to_distance_.count({p.second, p.first}) == 0
         || p.first == p.second) { 
         // значит, что длина маршрута в обе стороны равна
-        intervals_to_distance_[p] = d;
+        intervals_to_distance_[{p.second, p.first}] = distance;
     }
 }
 
@@ -158,7 +143,14 @@ BusInfo Transport_catalogue::ComputeBusInfo(string_view name) {
         // несуществующий автобус
         return {};
     }
-}    
+}  
+
+void Transport_catalogue::PrintIntervals() const {
+    for(const auto& e : intervals_to_distance_) {
+        std::cout << "From: \"" << (e.first.first)->name_ << "\" to \"" <<  (e.first.second)->name_ << "\". = " << e.second << "m. " << std::endl;
+    }
+}  
+
 } // namespace catalogue
 
 } // namespace transport

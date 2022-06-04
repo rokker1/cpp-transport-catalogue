@@ -80,14 +80,9 @@ public:
 
     StopInfo GetStopInfo(string_view stop_name);
 
-    void AddDistances(string_view name, const std::unordered_map<std::string, int>& distances);
+    void PrintIntervals() const;
 
-    // debug
-    // void PrintIntervals() const {
-    //     for(const auto& e : intervals_to_distance__) {
-    //         std::cout << "From: \"" << (e.first.first)->name_ << "\" to \"" <<  (e.first.second)->name_ << "\". = " << e.second << "m. " << std::endl;
-    //     }
-    // }
+    void SetDistance(std::pair<const Stop*, const Stop*> p, uint64_t distance);
     
 private:
     std::deque<Stop> all_stops_; //все остановки в базе данных
@@ -102,13 +97,13 @@ private:
     std::unordered_map<const Stop*, std::set<string_view>> stops_to_buses_; // v.1
     
     //контейнер длин между остановками
-    std::unordered_map<std::pair<const Stop*, const Stop*>, double, RouteDistanceHasher> intervals_to_distance_;
+    std::unordered_map<std::pair<const Stop*, const Stop*>, uint64_t, RouteDistanceHasher> intervals_to_distance_;
     
     uint64_t GetDistance(std::pair<const Stop*, const Stop*> p) const;
     
     BusInfo ComputeBusInfo(string_view name);
 
-    void SetDistance(std::pair<const Stop*, const Stop*> p, double d);
+    
 };        
 } // namespace catalogue
 

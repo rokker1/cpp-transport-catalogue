@@ -25,10 +25,14 @@ void ReadInput(std::istream& in, transport::catalogue::Transport_catalogue& cata
     for(const auto& [name, coordinates, _] : stop_queries) {
         catalogue.AddStop(name, coordinates);
     }
-    for(const auto& [name, _, distances] : stop_queries) {
-        catalogue.AddDistances(name, distances);
+
+    for(const auto& [name_from, _, distances] : stop_queries) {
+        const Stop* stop_from = catalogue.FindStop(name_from);
+        for(const auto& [name_to, distance] : distances) {
+            const Stop* stop_to = catalogue.FindStop(name_to);
+            catalogue.SetDistance({stop_from, stop_to}, distance);
+        }
     }
-    //transport_catalogue.PrintIntervals();
 
     auto bus_queries = reader.GetBusInputQueries();
     for(const auto& [name, stops, type] : bus_queries) {
