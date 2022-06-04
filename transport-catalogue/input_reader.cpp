@@ -97,7 +97,37 @@ std::tuple<std::string_view, int> Input_reader::ParseDistance(std::string_view& 
     text.remove_prefix(std::min(next_sep_pos, text.size()));
     
     return {stop_name, distance};
-}        
+}    
+void ReadInput(std::istream& in, transport::catalogue::Transport_catalogue& catalogue) {
+ 
+    Input_reader reader;
+    int query_count;
+    std::string str;
+
+    in >> query_count;
+    getline(in, str);
+    for(int i = 0; i < query_count; ++i) {
+        reader.AddInputQuery(in);
+    }
+
+    auto stop_queries = reader.GetStopInputQueries();
+    for(const auto& [name, coordinates, _] : stop_queries) {
+        catalogue.AddStop(name, coordinates);
+    }
+
+    for(const auto& [name_from, _, distances] : stop_queries) {
+        const Stop* stop_from = catalogue.FindStop(name_from);
+        for(const auto& [name_to, distance] : distances) {
+            const Stop* stop_to = catalogue.FindStop(name_to);
+            catalogue.SetDistance({stop_from, stop_to}, distance);
+        }
+    }
+
+    auto bus_queries = reader.GetBusInputQueries();
+    for(const auto& [name, stops, type] : bus_queries) {
+        catalogue.AddBus(name, stops, type);
+    }
+}   
 } // namespace input_reader
 } // namespace transport
 

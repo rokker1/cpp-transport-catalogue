@@ -55,7 +55,8 @@ private:
     AddStopQuery ParseStopInput(std::string_view text);
 
     std::tuple<std::string_view, int> ParseDistance(std::string_view& text);
-};        
+};     
+void ReadInput(std::istream& in, transport::catalogue::Transport_catalogue& catalogue);   
 } // namespace input_reader
 } // namespace transport
 
