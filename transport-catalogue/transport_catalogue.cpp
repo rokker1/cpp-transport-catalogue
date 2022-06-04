@@ -3,11 +3,11 @@
 namespace transport
 {
 namespace catalogue {
-void Transport_catalogue::AddBus(string_view name, const vector<string>& stops, BusType type) {
-    vector<const Stop*> stops_ptr;
-    auto it = buses_.insert(buses_.end(), std::move(Bus{string(name), stops_ptr, type}));
+void Transport_catalogue::AddBus(std::string_view name, const std::vector<std::string>& stops, BusType type) {
+    std::vector<const Stop*> stops_ptr;
+    auto it = buses_.insert(buses_.end(), std::move(Bus{std::string(name), stops_ptr, type}));
     
-    for_each(stops.begin(), stops.end(), [&stops_ptr, &it, this](string_view stop_name){
+    for_each(stops.begin(), stops.end(), [&stops_ptr, &it, this](std::string_view stop_name){
         if(const Stop* stop_ptr = FindStop(stop_name)) { // если есть такая остановка в базе
             it->stops_.push_back(std::move(stop_ptr));
             //добавление в stops_to_buses_
@@ -16,12 +16,12 @@ void Transport_catalogue::AddBus(string_view name, const vector<string>& stops, 
         }
         
     });
-    busname_to_bus_[string_view{it->name_}] = &(*it);
+    busname_to_bus_[std::string_view{it->name_}] = &(*it);
 }
 
-void Transport_catalogue::AddStop(string_view name, Coordinates coordinates) {
-    auto it = stops_.emplace(stops_.end(), std::move(Stop{string(name), coordinates}));
-    stopname_to_stop_[string_view{it->name_}] = &(*it);
+void Transport_catalogue::AddStop(std::string_view name, Coordinates coordinates) {
+    auto it = stops_.emplace(stops_.end(), std::move(Stop{std::string(name), coordinates}));
+    stopname_to_stop_[std::string_view{it->name_}] = &(*it);
 }
 
 const Stop* Transport_catalogue::FindStop(std::string_view name) const {
@@ -38,7 +38,7 @@ const Bus* Transport_catalogue::FindBus(std::string_view name) const {
     return busname_to_bus_.at(name);
 }
 
-BusInfo Transport_catalogue::GetBusInfo(string_view name) {
+BusInfo Transport_catalogue::GetBusInfo(std::string_view name) {
     if(busname_to_businfo_.count(name) == 0) {
         // статистики нет в базе
         return ComputeBusInfo(name);
@@ -47,7 +47,7 @@ BusInfo Transport_catalogue::GetBusInfo(string_view name) {
     return *(busname_to_businfo_.at(name));
 }
 
-StopInfo Transport_catalogue::GetStopInfo(string_view stop_name) {
+StopInfo Transport_catalogue::GetStopInfo(std::string_view stop_name) {
     if(stopname_to_stop_.count(stop_name) != 0) {
         // остановка существует
         const Stop* stop_ptr = FindStop(stop_name);
@@ -89,7 +89,7 @@ uint64_t Transport_catalogue::GetDistance(std::pair<const Stop*, const Stop*> p)
     }
 }
 
-BusInfo Transport_catalogue::ComputeBusInfo(string_view name) {
+BusInfo Transport_catalogue::ComputeBusInfo(std::string_view name) {
     const Bus* bus{nullptr}; //указатель на автобус в деке
     unsigned int stops_count = 0, unique_stops_count = 0;
     double length_geo = 0;
@@ -100,10 +100,10 @@ BusInfo Transport_catalogue::ComputeBusInfo(string_view name) {
         //bus = FindBus(name);
         stops_count = bus->stops_.size();
 
-        std::unordered_set<string_view, std::hash<string_view>, std::equal_to<string_view>> unique_stops;
+        std::unordered_set<std::string_view, std::hash<std::string_view>, std::equal_to<std::string_view>> unique_stops;
         for_each(bus->stops_.begin(), bus->stops_.end(), [&unique_stops](const Stop* stop){
             //std::cout << "Debug. \"" << stop->name_ << "\"." << std::endl;
-            unique_stops.insert(string_view(stop->name_));
+            unique_stops.insert(std::string_view(stop->name_));
         });
         unique_stops_count = unique_stops.size();
         

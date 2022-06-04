@@ -19,8 +19,8 @@ enum class RequestType {
 struct Request
 {
     RequestType type;
-    string bus;
-    string stop;
+    std::string bus;
+    std::string stop;
 };
 class Stat_reader {
 public:
@@ -35,8 +35,8 @@ private:
 
 std::ostream& operator<<(std::ostream& out, const BusInfo& info);
 std::ostream& operator<<(std::ostream& out, const StopInfo& info);
-void PrintBusInfo(string_view bus, const BusInfo& info, std::ostream& os);
-void PrintStopInfo(string_view stop, const StopInfo& info, std::ostream& os);    
+void PrintBusInfo(std::string_view bus, const BusInfo& info, std::ostream& os);
+void PrintStopInfo(std::string_view stop, const StopInfo& info, std::ostream& os);    
 void ProcessRequests(std::istream& is, std::ostream& os, Transport_catalogue& catalogue);
 } // namespace stat_reader
 

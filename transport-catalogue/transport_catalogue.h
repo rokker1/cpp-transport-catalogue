@@ -21,9 +21,6 @@ namespace catalogue
 
 using geo::Coordinates;
 using geo::ComputeDistance;
-using std::string_view;
-using std::vector;
-using std::string;
 
 struct Stop {
     std::string name_;
@@ -53,7 +50,7 @@ struct BusInfo {
 };
 
 struct StopInfo {
-    std::set<string_view> buses_;
+    std::set<std::string_view> buses_;
     bool IsExsists = false; 
 };
 
@@ -68,17 +65,17 @@ struct RouteDistanceHasher {
 class Transport_catalogue {
 public:
     
-    void AddBus(string_view name, const vector<string>& stops, BusType type);
+    void AddBus(std::string_view name, const std::vector<std::string>& stops, BusType type);
 
-    void AddStop(string_view name, Coordinates coordinates);
+    void AddStop(std::string_view name, Coordinates coordinates);
 
     const Stop* FindStop(std::string_view name) const;
 
     const Bus* FindBus(std::string_view name) const;
 
-    BusInfo GetBusInfo(string_view name);
+    BusInfo GetBusInfo(std::string_view name);
 
-    StopInfo GetStopInfo(string_view stop_name);
+    StopInfo GetStopInfo(std::string_view stop_name);
 
     void PrintIntervals() const;
 
@@ -103,7 +100,7 @@ private:
     
     uint64_t GetDistance(std::pair<const Stop*, const Stop*> p) const;
     
-    BusInfo ComputeBusInfo(string_view name);
+    BusInfo ComputeBusInfo(std::string_view name);
 
     
 };        

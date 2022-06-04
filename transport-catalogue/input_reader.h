@@ -17,9 +17,6 @@ namespace transport
 namespace input_reader
 {
 using namespace catalogue;
-using std::string_view;
-using std::vector;
-using std::string;
 using geo::Coordinates;
 
 enum class QueryType
@@ -32,12 +29,12 @@ enum class QueryType
 struct AddStopQuery {
     std::string name_;
     Coordinates cordinates_;
-    std::unordered_map<string, int> distances__;
+    std::unordered_map<std::string, int> distances__;
 };
 
 struct AddBusQuery {
     std::string name_;
-    std::vector<string> stops_;
+    std::vector<std::string> stops_;
     BusType type_;
 };
 
@@ -53,11 +50,11 @@ public:
     const std::deque<AddBusQuery>& GetBusInputQueries() const;
 
 private:
-    AddBusQuery ParseBusInputQuery(string_view text);
+    AddBusQuery ParseBusInputQuery(std::string_view text);
 
-    AddStopQuery ParseStopInput(string_view text);
+    AddStopQuery ParseStopInput(std::string_view text);
 
-    std::tuple<string_view, int> ParseDistance(string_view& text);
+    std::tuple<std::string_view, int> ParseDistance(std::string_view& text);
 };        
 } // namespace input_reader
 } // namespace transport
