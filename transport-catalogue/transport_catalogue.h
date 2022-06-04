@@ -101,8 +101,6 @@ private:
     uint64_t GetDistance(std::pair<const Stop*, const Stop*> p) const;
     
     BusInfo ComputeBusInfo(std::string_view name);
-
-    
 };        
 } // namespace catalogue
 

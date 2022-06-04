@@ -11,7 +11,6 @@ void Transport_catalogue::AddBus(std::string_view name, const std::vector<std::s
         if(const Stop* stop_ptr = FindStop(stop_name)) { // если есть такая остановка в базе
             it->stops_.push_back(std::move(stop_ptr));
             //добавление в stops_to_buses_
-            //stops_to_buses_[stop_ptr].insert(it->name_);
             stops_to_buses_[stop_ptr].insert(&*it);
         }
         
@@ -161,6 +160,5 @@ void Transport_catalogue::PrintIntervals() const {
 }  
 
 } // namespace catalogue
-
 } // namespace transport
 
