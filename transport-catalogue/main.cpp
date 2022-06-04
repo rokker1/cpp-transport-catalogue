@@ -23,7 +23,7 @@ void ReadInput(std::istream& in, transport::catalogue::Transport_catalogue& cata
 
     auto stop_queries = reader.GetStopInputQueries();
     for(const auto& [name, coordinates, _] : stop_queries) {
-        catalogue.AddStop(name, coordinates.lat, coordinates.lng);
+        catalogue.AddStop(name, coordinates);
     }
     for(const auto& [name, _, distances] : stop_queries) {
         catalogue.AddDistances(name, distances);

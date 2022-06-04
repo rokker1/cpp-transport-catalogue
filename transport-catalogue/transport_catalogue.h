@@ -70,7 +70,7 @@ public:
     
     void AddBus(string_view name, const vector<string>& stops, BusType type);
 
-    void AddStop(string_view name, double lat, double lng);
+    void AddStop(string_view name, Coordinates coordinates);
 
     const Stop* FindStop(std::string_view name) const;
 

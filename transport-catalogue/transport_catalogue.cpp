@@ -18,36 +18,32 @@ void Transport_catalogue::AddBus(string_view name, const vector<string>& stops, 
     busname_to_bus_[string_view{it->name_}] = &(*it);
 }
 
-void Transport_catalogue::AddStop(string_view name, double lat, double lng) {
-    auto it = all_stops_.emplace(all_stops_.end(), std::move(Stop{string(name), Coordinates{lat, lng}}));
-    
+void Transport_catalogue::AddStop(string_view name, Coordinates coordinates) {
+    auto it = all_stops_.emplace(all_stops_.end(), std::move(Stop{string(name), coordinates}));
     stopname_to_stop_[string_view{it->name_}] = &(*it);
 }
 
 const Stop* Transport_catalogue::FindStop(std::string_view name) const {
     if(stopname_to_stop_.count(name) == 0) {
         return nullptr;
-    } else {
-        return stopname_to_stop_.at(name);
     }
+    return stopname_to_stop_.at(name);
 }
 
 const Bus* Transport_catalogue::FindBus(std::string_view name) const {
     if(busname_to_bus_.count(name) == 0) {
         return nullptr;
-    } else {
-        return busname_to_bus_.at(name);
-    }
+    } 
+    return busname_to_bus_.at(name);
 }
 
 BusInfo Transport_catalogue::GetBusInfo(string_view name) {
     if(busname_to_businfo_.count(name) == 0) {
         // статистики нет в базе
         return ComputeBusInfo(name);
-    } else {
-        // статистика уже есть в базе
-        return *(busname_to_businfo_.at(name));
-    }
+    } 
+    // статистика уже есть в базе
+    return *(busname_to_businfo_.at(name));
 }
 
 StopInfo Transport_catalogue::GetStopInfo(string_view stop_name) {
