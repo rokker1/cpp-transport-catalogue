@@ -96,7 +96,7 @@ private:
     std::deque<BusInfo> bus_infos_;
     std::unordered_map<std::string_view, const BusInfo*> busname_to_businfo_;
 
-    std::unordered_map<const Stop*, std::set<string_view>> stops_to_buses_;
+    std::unordered_map<const Stop*, std::set<const Bus*>> stops_to_buses_;
     
     //контейнер длин между остановками
     std::unordered_map<std::pair<const Stop*, const Stop*>, uint64_t, RouteDistanceHasher> intervals_to_distance_;

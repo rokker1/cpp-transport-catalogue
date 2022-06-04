@@ -11,7 +11,8 @@ void Transport_catalogue::AddBus(string_view name, const vector<string>& stops, 
         if(const Stop* stop_ptr = FindStop(stop_name)) { // если есть такая остановка в базе
             it->stops_.push_back(std::move(stop_ptr));
             //добавление в stops_to_buses_
-            stops_to_buses_[stop_ptr].insert(it->name_);
+            //stops_to_buses_[stop_ptr].insert(it->name_);
+            stops_to_buses_[stop_ptr].insert(&*it);
         }
         
     });
@@ -52,7 +53,15 @@ StopInfo Transport_catalogue::GetStopInfo(string_view stop_name) {
         const Stop* stop_ptr = FindStop(stop_name);
         if(stops_to_buses_.count(stop_ptr) != 0) {
             //остановка есть и через нее едут автобусы
-            return StopInfo{stops_to_buses_.at(stop_ptr), true};
+            StopInfo stop_info{{}, true};
+
+            // после ревью появился лишний цикл здесь
+            std::for_each(stops_to_buses_.at(stop_ptr).begin(),
+                            stops_to_buses_.at(stop_ptr).end(),
+                            [&](auto bus){
+                                stop_info.buses_.insert(bus->name_);
+                            });
+            return stop_info;
         } else {
             return StopInfo{{}, true}; // остановка есть, а автобусов нет
         }
