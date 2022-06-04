@@ -85,8 +85,10 @@ public:
     void SetDistance(std::pair<const Stop*, const Stop*> p, uint64_t distance);
     
 private:
-    std::deque<Stop> all_stops_; //все остановки в базе данных
-    std::unordered_map<std::string_view, const Stop*> stopname_to_stop_; //индексация остановок -> указатель на остановку
+    //все остановки в базе данных
+    std::deque<Stop> stops_; 
+    //индексация остановок -> указатель на остановку
+    std::unordered_map<std::string_view, const Stop*> stopname_to_stop_; 
 
     std::deque<Bus> buses_;
     std::unordered_map<std::string_view, const Bus*> busname_to_bus_;
@@ -94,7 +96,7 @@ private:
     std::deque<BusInfo> bus_infos_;
     std::unordered_map<std::string_view, const BusInfo*> busname_to_businfo_;
 
-    std::unordered_map<const Stop*, std::set<string_view>> stops_to_buses_; // v.1
+    std::unordered_map<const Stop*, std::set<string_view>> stops_to_buses_;
     
     //контейнер длин между остановками
     std::unordered_map<std::pair<const Stop*, const Stop*>, uint64_t, RouteDistanceHasher> intervals_to_distance_;

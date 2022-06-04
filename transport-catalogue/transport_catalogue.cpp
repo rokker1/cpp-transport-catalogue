@@ -19,7 +19,7 @@ void Transport_catalogue::AddBus(string_view name, const vector<string>& stops, 
 }
 
 void Transport_catalogue::AddStop(string_view name, Coordinates coordinates) {
-    auto it = all_stops_.emplace(all_stops_.end(), std::move(Stop{string(name), coordinates}));
+    auto it = stops_.emplace(stops_.end(), std::move(Stop{string(name), coordinates}));
     stopname_to_stop_[string_view{it->name_}] = &(*it);
 }
 
