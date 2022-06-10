@@ -1,18 +1,21 @@
-#include <iostream>
+#include "json.h"
+#include "request_handler.h"
+#include "json_reader.h"
+#include "map_renderer.h"
+int main() {
+    {
+      json::Document doc = json::Load(std::cin);
 
-#include "input_reader.h"
-#include "stat_reader.h"
-#include "transport_catalogue.h"
-#include "geo.h"
+      catalogue::TransportCatalogue cat;
+      json_reader::JsonReader reader(doc, cat);
 
-int main () {
-    using namespace std;
-    using namespace transport::catalogue;
-    using namespace transport::input_reader;
-    using namespace transport::stat_reader;
-    Transport_catalogue transport_catalogue;
+      renderer::MapRenderer renderer(reader.GetRenderSettings(), cat.GetBusesSorted());
 
-    ReadInput(std::cin, transport_catalogue);
-    ProcessRequests(std::cin, std::cout, transport_catalogue);
+      RequestHandler handler(cat, renderer);
 
+      json::Document result = reader.ProcessStatRequests(handler);
+      json::Print(result, std::cout);
+    }
+
+    return 0;
 }

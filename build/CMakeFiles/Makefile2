@@ -81,12 +81,12 @@ clean: CMakeFiles/Transport-catalogue.dir/clean
 CMakeFiles/Transport-catalogue.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Transport-catalogue.dir/build.make CMakeFiles/Transport-catalogue.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Transport-catalogue.dir/build.make CMakeFiles/Transport-catalogue.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/alexander/source/cpp-transport-catalogue/build/CMakeFiles --progress-num=1,2,3,4,5 "Built target Transport-catalogue"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/alexander/source/cpp-transport-catalogue/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10 "Built target Transport-catalogue"
 .PHONY : CMakeFiles/Transport-catalogue.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/Transport-catalogue.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/alexander/source/cpp-transport-catalogue/build/CMakeFiles 5
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/alexander/source/cpp-transport-catalogue/build/CMakeFiles 10
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/Transport-catalogue.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/alexander/source/cpp-transport-catalogue/build/CMakeFiles 0
 .PHONY : CMakeFiles/Transport-catalogue.dir/rule

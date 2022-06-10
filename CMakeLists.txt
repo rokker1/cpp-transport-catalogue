@@ -6,9 +6,11 @@ project(Transport-catalogue)
 # add the executable
 add_executable(Transport-catalogue 
     transport-catalogue/main.cpp
-    transport-catalogue/input_reader.cpp
-    transport-catalogue/stat_reader.cpp
+    transport-catalogue/json_reader.cpp
+    transport-catalogue/domain.cpp
     transport-catalogue/transport_catalogue.cpp
-    transport-catalogue/input_reader.h
-    transport-catalogue/stat_reader.h
-    transport-catalogue/transport_catalogue.h)
+    transport-catalogue/map_renderer.cpp
+    transport-catalogue/request_handler.cpp
+    transport-catalogue/svg.cpp
+    transport-catalogue/json.cpp
+    transport-catalogue/geo.cpp)

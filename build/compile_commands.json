@@ -6,17 +6,42 @@
 },
 {
   "directory": "/home/alexander/source/cpp-transport-catalogue/build",
-  "command": "/usr/bin/g++   -g -o CMakeFiles/Transport-catalogue.dir/transport-catalogue/input_reader.cpp.o -c /home/alexander/source/cpp-transport-catalogue/transport-catalogue/input_reader.cpp",
-  "file": "/home/alexander/source/cpp-transport-catalogue/transport-catalogue/input_reader.cpp"
+  "command": "/usr/bin/g++   -g -o CMakeFiles/Transport-catalogue.dir/transport-catalogue/json_reader.cpp.o -c /home/alexander/source/cpp-transport-catalogue/transport-catalogue/json_reader.cpp",
+  "file": "/home/alexander/source/cpp-transport-catalogue/transport-catalogue/json_reader.cpp"
 },
 {
   "directory": "/home/alexander/source/cpp-transport-catalogue/build",
-  "command": "/usr/bin/g++   -g -o CMakeFiles/Transport-catalogue.dir/transport-catalogue/stat_reader.cpp.o -c /home/alexander/source/cpp-transport-catalogue/transport-catalogue/stat_reader.cpp",
-  "file": "/home/alexander/source/cpp-transport-catalogue/transport-catalogue/stat_reader.cpp"
+  "command": "/usr/bin/g++   -g -o CMakeFiles/Transport-catalogue.dir/transport-catalogue/domain.cpp.o -c /home/alexander/source/cpp-transport-catalogue/transport-catalogue/domain.cpp",
+  "file": "/home/alexander/source/cpp-transport-catalogue/transport-catalogue/domain.cpp"
 },
 {
   "directory": "/home/alexander/source/cpp-transport-catalogue/build",
   "command": "/usr/bin/g++   -g -o CMakeFiles/Transport-catalogue.dir/transport-catalogue/transport_catalogue.cpp.o -c /home/alexander/source/cpp-transport-catalogue/transport-catalogue/transport_catalogue.cpp",
   "file": "/home/alexander/source/cpp-transport-catalogue/transport-catalogue/transport_catalogue.cpp"
+},
+{
+  "directory": "/home/alexander/source/cpp-transport-catalogue/build",
+  "command": "/usr/bin/g++   -g -o CMakeFiles/Transport-catalogue.dir/transport-catalogue/map_renderer.cpp.o -c /home/alexander/source/cpp-transport-catalogue/transport-catalogue/map_renderer.cpp",
+  "file": "/home/alexander/source/cpp-transport-catalogue/transport-catalogue/map_renderer.cpp"
+},
+{
+  "directory": "/home/alexander/source/cpp-transport-catalogue/build",
+  "command": "/usr/bin/g++   -g -o CMakeFiles/Transport-catalogue.dir/transport-catalogue/request_handler.cpp.o -c /home/alexander/source/cpp-transport-catalogue/transport-catalogue/request_handler.cpp",
+  "file": "/home/alexander/source/cpp-transport-catalogue/transport-catalogue/request_handler.cpp"
+},
+{
+  "directory": "/home/alexander/source/cpp-transport-catalogue/build",
+  "command": "/usr/bin/g++   -g -o CMakeFiles/Transport-catalogue.dir/transport-catalogue/svg.cpp.o -c /home/alexander/source/cpp-transport-catalogue/transport-catalogue/svg.cpp",
+  "file": "/home/alexander/source/cpp-transport-catalogue/transport-catalogue/svg.cpp"
+},
+{
+  "directory": "/home/alexander/source/cpp-transport-catalogue/build",
+  "command": "/usr/bin/g++   -g -o CMakeFiles/Transport-catalogue.dir/transport-catalogue/json.cpp.o -c /home/alexander/source/cpp-transport-catalogue/transport-catalogue/json.cpp",
+  "file": "/home/alexander/source/cpp-transport-catalogue/transport-catalogue/json.cpp"
+},
+{
+  "directory": "/home/alexander/source/cpp-transport-catalogue/build",
+  "command": "/usr/bin/g++   -g -o CMakeFiles/Transport-catalogue.dir/transport-catalogue/geo.cpp.o -c /home/alexander/source/cpp-transport-catalogue/transport-catalogue/geo.cpp",
+  "file": "/home/alexander/source/cpp-transport-catalogue/transport-catalogue/geo.cpp"
 }
 ]
