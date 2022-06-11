@@ -66,6 +66,9 @@ private:
     json::Node ConvertStopInfoToJsonDict(int id, std::optional<StopInfo> bus_stat);
     json::Node ConvertMapToJsonDict(int id, std::string map_as_string);
 
+    void ProcessBusStatRequest(RequestHandler& handler, const json::Node& stat_request, json::Array& answers_array);
+    void ProcessStopInfoRequest(RequestHandler& handler, const json::Node& stat_request, json::Array& answers_array);
+    void ProcessMapRequest(RequestHandler& handler, const json::Node& stat_request, json::Array& answers_array);
     json::Document document_;
     catalogue::TransportCatalogue& catalogue_;
 };

@@ -460,9 +460,7 @@ CMakeFiles/Transport-catalogue.dir/transport-catalogue/json.cpp.o: ../transport-
   /usr/include/c++/12/bits/vector.tcc \
   /usr/include/c++/12/variant \
   /usr/include/c++/12/bits/enable_special_members.h \
-  /usr/include/c++/12/bits/parse_numbers.h \
-  /usr/include/c++/12/sstream \
-  /usr/include/c++/12/bits/sstream.tcc
+  /usr/include/c++/12/bits/parse_numbers.h
 
 CMakeFiles/Transport-catalogue.dir/transport-catalogue/json_reader.cpp.o: ../transport-catalogue/json_reader.cpp \
   /usr/include/stdc-predef.h \
@@ -959,8 +957,6 @@ CMakeFiles/Transport-catalogue.dir/transport-catalogue/main.cpp.o: ../transport-
   /usr/include/c++/12/variant \
   /usr/include/c++/12/bits/enable_special_members.h \
   /usr/include/c++/12/bits/parse_numbers.h \
-  /usr/include/c++/12/sstream \
-  /usr/include/c++/12/bits/sstream.tcc \
   ../transport-catalogue/request_handler.h \
   ../transport-catalogue/transport_catalogue.h \
   /usr/include/c++/12/algorithm \
@@ -995,6 +991,8 @@ CMakeFiles/Transport-catalogue.dir/transport-catalogue/main.cpp.o: ../transport-
   /usr/include/c++/12/bits/locale_facets_nonio.tcc \
   /usr/include/c++/12/bits/locale_conv.h \
   /usr/include/c++/12/bits/quoted_string.h \
+  /usr/include/c++/12/sstream \
+  /usr/include/c++/12/bits/sstream.tcc \
   /usr/include/c++/12/unordered_set \
   /usr/include/c++/12/bits/unordered_set.h \
   /usr/include/c++/12/functional \
@@ -2329,12 +2327,6 @@ CMakeFiles/Transport-catalogue.dir/transport-catalogue/transport_catalogue.cpp.o
 
 /usr/include/c++/12/cstdlib:
 
-/usr/include/libintl.h:
-
-/usr/include/bits/endianness.h:
-
-/usr/include/c++/12/bits/sstream.tcc:
-
 /usr/include/c++/12/ext/numeric_traits.h:
 
 /usr/include/c++/12/pstl/pstl_config.h:
@@ -2503,12 +2495,6 @@ CMakeFiles/Transport-catalogue.dir/transport-catalogue/transport_catalogue.cpp.o
 
 /usr/include/sys/select.h:
 
-/usr/include/c++/12/bits/codecvt.h:
-
-/usr/include/c++/12/bits/cpp_type_traits.h:
-
-/usr/include/bits/select.h:
-
 /usr/include/c++/12/bits/exception.h:
 
 /usr/include/c++/12/bits/locale_facets_nonio.h:
@@ -2625,6 +2611,10 @@ CMakeFiles/Transport-catalogue.dir/transport-catalogue/transport_catalogue.cpp.o
 
 /usr/include/c++/12/bits/parse_numbers.h:
 
+/usr/include/c++/12/sstream:
+
+/usr/include/c++/12/bits/basic_ios.h:
+
 /usr/include/c++/12/pstl/execution_defs.h:
 
 /usr/include/c++/12/string_view:
@@ -2673,10 +2663,6 @@ CMakeFiles/Transport-catalogue.dir/transport-catalogue/transport_catalogue.cpp.o
 
 /usr/include/c++/12/bits/enable_special_members.h:
 
-/usr/include/c++/12/bits/basic_ios.h:
-
-/usr/include/c++/12/sstream:
-
 /usr/include/c++/12/algorithm:
 
 /usr/include/c++/12/bits/stl_algo.h:
@@ -2700,3 +2686,15 @@ CMakeFiles/Transport-catalogue.dir/transport-catalogue/transport_catalogue.cpp.o
 /usr/include/bits/time64.h:
 
 /usr/include/c++/12/x86_64-redhat-linux/bits/time_members.h:
+
+/usr/include/c++/12/bits/sstream.tcc:
+
+/usr/include/bits/endianness.h:
+
+/usr/include/libintl.h:
+
+/usr/include/c++/12/bits/cpp_type_traits.h:
+
+/usr/include/bits/select.h:
+
+/usr/include/c++/12/bits/codecvt.h:

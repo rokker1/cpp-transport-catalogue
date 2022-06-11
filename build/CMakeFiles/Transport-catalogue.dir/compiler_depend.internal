@@ -464,8 +464,6 @@ CMakeFiles/Transport-catalogue.dir/transport-catalogue/json.cpp.o
  /usr/include/c++/12/variant
  /usr/include/c++/12/bits/enable_special_members.h
  /usr/include/c++/12/bits/parse_numbers.h
- /usr/include/c++/12/sstream
- /usr/include/c++/12/bits/sstream.tcc
 
 CMakeFiles/Transport-catalogue.dir/transport-catalogue/json_reader.cpp.o
  /home/alexander/source/cpp-transport-catalogue/transport-catalogue/json_reader.cpp
@@ -964,8 +962,6 @@ CMakeFiles/Transport-catalogue.dir/transport-catalogue/main.cpp.o
  /usr/include/c++/12/variant
  /usr/include/c++/12/bits/enable_special_members.h
  /usr/include/c++/12/bits/parse_numbers.h
- /usr/include/c++/12/sstream
- /usr/include/c++/12/bits/sstream.tcc
  /home/alexander/source/cpp-transport-catalogue/transport-catalogue/request_handler.h
  /home/alexander/source/cpp-transport-catalogue/transport-catalogue/transport_catalogue.h
  /usr/include/c++/12/algorithm
@@ -1000,6 +996,8 @@ CMakeFiles/Transport-catalogue.dir/transport-catalogue/main.cpp.o
  /usr/include/c++/12/bits/locale_facets_nonio.tcc
  /usr/include/c++/12/bits/locale_conv.h
  /usr/include/c++/12/bits/quoted_string.h
+ /usr/include/c++/12/sstream
+ /usr/include/c++/12/bits/sstream.tcc
  /usr/include/c++/12/unordered_set
  /usr/include/c++/12/bits/unordered_set.h
  /usr/include/c++/12/functional

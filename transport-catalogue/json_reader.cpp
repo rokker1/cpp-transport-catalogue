@@ -152,21 +152,15 @@ json::Document JsonReader::ProcessStatRequests(RequestHandler& handler) {
         std::string_view request_type = stat_request.AsMap().at("type").AsString();
         if(request_type == "Bus"sv) {
 
-            std::optional<BusStat> bus_stat = handler.GetBusStat(stat_request.AsMap().at("name").AsString());
-            int id = stat_request.AsMap().at("id").AsInt();
-            answers_array.push_back(std::move(ConvertBusStatToJsonDict(id, bus_stat)));
+            ProcessBusStatRequest(handler, stat_request, answers_array);
 
         } else if(request_type == "Stop"sv) {
             
-            int id = stat_request.AsMap().at("id").AsInt();
-            std::optional<StopInfo> stop_info = handler.GetStopInfo(stat_request.AsMap().at("name").AsString());
-            answers_array.push_back(std::move(ConvertStopInfoToJsonDict(id, stop_info)));
+            ProcessStopInfoRequest(handler, stat_request, answers_array);
 
         } else if(request_type == "Map"sv) {
             
-            int id = stat_request.AsMap().at("id").AsInt();
-            std::string map_as_string = std::move(handler.RenderMapToString());
-            answers_array.push_back(std::move(ConvertMapToJsonDict(id, map_as_string)));
+            ProcessMapRequest(handler, stat_request, answers_array);
         
         } else {
             throw std::logic_error("bad stat request");
@@ -177,6 +171,23 @@ json::Document JsonReader::ProcessStatRequests(RequestHandler& handler) {
     return document;
 }
 
+void JsonReader::ProcessBusStatRequest(RequestHandler& handler, const json::Node& stat_request, json::Array& answers_array) {
+    std::optional<BusStat> bus_stat = handler.GetBusStat(stat_request.AsMap().at("name").AsString());
+    int id = stat_request.AsMap().at("id").AsInt();
+    answers_array.push_back(std::move(ConvertBusStatToJsonDict(id, bus_stat)));
+}
+
+void JsonReader::ProcessStopInfoRequest(RequestHandler& handler, const json::Node& stat_request, json::Array& answers_array) {
+    int id = stat_request.AsMap().at("id").AsInt();
+    std::optional<StopInfo> stop_info = handler.GetStopInfo(stat_request.AsMap().at("name").AsString());
+    answers_array.push_back(std::move(ConvertStopInfoToJsonDict(id, stop_info)));
+}
+
+void JsonReader::ProcessMapRequest(RequestHandler& handler, const json::Node& stat_request, json::Array& answers_array) {
+    int id = stat_request.AsMap().at("id").AsInt();
+    std::string map_as_string = std::move(handler.RenderMapToString());
+    answers_array.push_back(std::move(ConvertMapToJsonDict(id, map_as_string)));
+}
 
 json::Node JsonReader::ConvertBusStatToJsonDict(int id, std::optional<BusStat> bus_stat) {
 
