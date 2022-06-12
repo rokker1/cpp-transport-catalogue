@@ -15,6 +15,8 @@ int main() {
 
       json::Document result = reader.ProcessStatRequests(handler);
       json::Print(result, std::cout);
+
+      
     }
 
     return 0;
