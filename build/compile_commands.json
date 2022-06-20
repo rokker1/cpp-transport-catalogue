@@ -43,5 +43,10 @@
   "directory": "/home/alexander/source/cpp-transport-catalogue/build",
   "command": "/usr/bin/g++   -g -o CMakeFiles/Transport-catalogue.dir/transport-catalogue/geo.cpp.o -c /home/alexander/source/cpp-transport-catalogue/transport-catalogue/geo.cpp",
   "file": "/home/alexander/source/cpp-transport-catalogue/transport-catalogue/geo.cpp"
+},
+{
+  "directory": "/home/alexander/source/cpp-transport-catalogue/build",
+  "command": "/usr/bin/g++   -g -o CMakeFiles/Transport-catalogue.dir/transport-catalogue/json_builder.cpp.o -c /home/alexander/source/cpp-transport-catalogue/transport-catalogue/json_builder.cpp",
+  "file": "/home/alexander/source/cpp-transport-catalogue/transport-catalogue/json_builder.cpp"
 }
 ]
