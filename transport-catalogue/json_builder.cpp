@@ -4,7 +4,7 @@ namespace json {
     
 ValueItemContext Builder::Key(std::string key) {
     if(nodes_stack_.empty()) {
-        throw std::logic_error("fuck you");
+        throw std::logic_error("error");
     }
     if(!nodes_stack_.empty() && !nodes_stack_.back()->IsDict()) {
         // попытка добавления ключа, если словарь не открывался
@@ -26,11 +26,11 @@ ValueItemContext Builder::Key(std::string key) {
 
 Builder& Builder::Value(Node::Value value) {
     if(!nodes_stack_.empty() && nodes_stack_.back()->IsDict()) {
-        throw std::logic_error("pizda");
+        throw std::logic_error("error");
     }
     
     if(!no_content_ && nodes_stack_.empty()) {
-        throw std::logic_error("pohui");         
+        throw std::logic_error("error");         
     }
     
     Node current_node;
@@ -48,7 +48,7 @@ Builder& Builder::Value(Node::Value value) {
     } else if(std::holds_alternative<json::Dict>(value)) {
         current_node = std::get<json::Dict>(value);
     } else {
-        throw std::logic_error("fuck!");
+        throw std::logic_error("error!");
     }
 
     if(nodes_stack_.empty()) {
@@ -66,7 +66,7 @@ Builder& Builder::Value(Node::Value value) {
         nodes_stack_.back()->AsArray().push_back(std::move(current_node));
 
     } else {
-        throw std::logic_error("fuck");
+        throw std::logic_error("error");
     }
     //debug
     // json::Print(json::Document(root_), std::cerr);
@@ -89,7 +89,7 @@ DictItemContext Builder::StartDict() {
         //в стек помещается адрес только что вставленного словаря
         nodes_stack_.push_back(&inserted_node);
     } else {
-        throw std::logic_error("blyat");
+        throw std::logic_error("error");
     }
     //debug
     // json::Print(json::Document(root_), std::cerr);
@@ -114,7 +114,7 @@ ArrayItemContext Builder::StartArray() {
         //вот тут надо вернуть конктекст
 
     } else {
-        throw std::logic_error("blyat hooinya sobac'ya");
+        throw std::logic_error("error");
     }        
     //debug
     // json::Print(json::Document(root_), std::cerr);
@@ -123,7 +123,7 @@ ArrayItemContext Builder::StartArray() {
 Builder& Builder::EndDict() {
     if(!nodes_stack_.empty() && !nodes_stack_.back()->IsDict()) {
         // попытка добавления ключа, если словарь не открывался
-        throw std::logic_error("pizdetsc"); 
+        throw std::logic_error("error"); 
     }
     nodes_stack_.pop_back();
     no_content_ = false;
@@ -134,7 +134,7 @@ Builder& Builder::EndDict() {
 Builder& Builder::EndArray(){
     if(!nodes_stack_.empty() && !nodes_stack_.back()->IsArray()) {
         // попытка добавления ключа, если словарь не открывался
-        throw std::logic_error("pizdetsc"); 
+        throw std::logic_error("error"); 
     }
     nodes_stack_.pop_back();  
     no_content_ = false; 
@@ -144,11 +144,11 @@ Builder& Builder::EndArray(){
 }
 Node Builder::Build() {
     if(!nodes_stack_.empty()) {
-        throw std::logic_error("ebat nahui blyat");
+        throw std::logic_error("error");
     }
 
     if(no_content_) {
-        throw std::logic_error("usukablyat");
+        throw std::logic_error("error");
     }        
     //debug
     // json::Print(json::Document(root_), std::cerr);
