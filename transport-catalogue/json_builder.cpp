@@ -85,7 +85,7 @@ DictItemContext Builder::StartDict() {
     } else if(!nodes_stack_.empty() && nodes_stack_.back()->IsArray()) {
         // случай когда добавляем в массив (Array) node типа dict
         //nodes_stack_.emplace_back()
-        Node& inserted_node = nodes_stack_.back()->AsArray().emplace_back(json::Dict{});
+        Node& inserted_node = nodes_stack_.back()->AsArray().emplace_back(json::Dict{}); // тут
         //в стек помещается адрес только что вставленного словаря
         nodes_stack_.push_back(&inserted_node);
     } else {
@@ -95,6 +95,11 @@ DictItemContext Builder::StartDict() {
     // json::Print(json::Document(root_), std::cerr);
     return DictItemContext{*this};
 }
+/*
+StartArray() и StartDict() отличаются только в строках 88 и 110, 
+где в контейнер помещается значение определенного тип,
+ можно организовать вспомогательный метод по добавлению объекта, а переменную передавать параметром
+*/
 ArrayItemContext Builder::StartArray() {
     if(nodes_stack_.empty() && no_content_) {
         root_ = std::move(json::Node(json::Array{}));
@@ -107,7 +112,7 @@ ArrayItemContext Builder::StartArray() {
     } else if(!nodes_stack_.empty() && nodes_stack_.back()->IsArray()) {
         // случай когда добавляем в массив (Array) node типа dict
         //nodes_stack_.emplace_back()
-        Node inserted_node = nodes_stack_.back()->AsArray().emplace_back(json::Array{});
+        Node inserted_node = nodes_stack_.back()->AsArray().emplace_back(json::Array{}); // тут
         //в стек помещается адрес только что вставленного словаря
         nodes_stack_.push_back(&inserted_node);
 
