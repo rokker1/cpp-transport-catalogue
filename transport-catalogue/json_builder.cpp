@@ -2,10 +2,14 @@
 
 namespace json {
 
-Builder::ValueItemContext Builder::CommonContext::Key(std::string key) {
+Builder::ChildValueItemContext Builder::CommonContext::Key(std::string key) {
     return builder_.Key(key);
-
 }
+
+Builder& Builder::CommonContext::Value(Node::Value value) {
+    return builder_.Value(value);
+}
+
 Builder::DictItemContext Builder::CommonContext::StartDict() {
     return builder_.StartDict();
 }
@@ -21,12 +25,20 @@ Builder::ArrayItemContext Builder::CommonContext::StartArray() {
 Builder& Builder::CommonContext::EndArray() {
     return builder_.EndArray();
 }
+
 Node Builder::CommonContext::Build() {
     return builder_.Build();
 }
 
+Builder::ChildKeyValueItemContext Builder::ChildValueItemContext::Value(Node::Value value) {
+    return builder_.Value(value);
+}
 
-Builder::ValueItemContext Builder::Key(std::string key) {
+Builder::ChildArrayItemValueContext Builder::ChildArrayItemValueContext::Value(Node::Value value) {
+    return builder_.Value(value);
+}
+
+Builder::ChildValueItemContext Builder::Key(std::string key) {
     if(nodes_stack_.empty()) {
         throw std::logic_error("error");
     }
@@ -45,7 +57,7 @@ Builder::ValueItemContext Builder::Key(std::string key) {
     //debug
     //json::Print(json::Document(root_), std::cerr);
 
-    return ValueItemContext{*this};
+    return ChildValueItemContext{*this};
 }
 
 Builder& Builder::Value(Node::Value value) {
@@ -187,9 +199,9 @@ Node Builder::Build() {
 Builder::DictItemContext::DictItemContext(Builder& builder)
     : builder_(builder) {}
 
-Builder::ValueItemContext Builder::DictItemContext::Key(std::string key) {
-    return builder_.Key(key);
-}
+// Builder::ValueItemContext Builder::DictItemContext::Key(std::string key) {
+//     return builder_.Key(key);
+// }
 
 Builder& Builder::DictItemContext::EndDict() {
     return builder_.EndDict();
@@ -219,9 +231,9 @@ Builder::ArrayItemContext Builder::ValueItemContext::StartArray() {
     return builder_.StartArray();
 }
 
-Builder::ValueItemContext Builder::KeyValueItemContext::Key(std::string key) {
-    return builder_.Key(key);
-}
+// Builder::ChildValueItemContext Builder::KeyValueItemContext::Key(std::string key) {
+//     return builder_.Key(key);
+// }
 Builder& Builder::KeyValueItemContext::EndDict() {
     return builder_.EndDict();
 }

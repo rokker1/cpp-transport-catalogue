@@ -42,8 +42,14 @@ class KeyValueItemContext; // 2
 class DictItemContext; // 3
 class ArrayItemContext; // 4
 class ArrayValueItemContext; // 5
+
+class ChildValueItemContext; // 1
+class ChildKeyValueItemContext; // 2
+class ChildDictItemContext; // 3
+class ChildArrayItemContext; // 4
+class ChildArrayItemValueContext; // 5
   
-    ValueItemContext Key(std::string key);
+    ChildValueItemContext Key(std::string key);
     Builder& Value(Node::Value value);
 
     DictItemContext StartDict();
@@ -65,22 +71,22 @@ public:
 
  class CommonContext {
  public:
-     CommonContext(Builder& builder)
-         : builder_(builder) {}
+    CommonContext(Builder& builder)
+        : builder_(builder) {}
 
-     virtual Builder::ValueItemContext Key(std::string key);
+    Builder::ChildValueItemContext Key(std::string key);
 
-     virtual Builder& Value(Node::Value value) = 0;
-    
-     virtual Builder::DictItemContext StartDict();
+    Builder& Value(Node::Value value);
 
-     virtual Builder& EndDict();
+    Builder::DictItemContext StartDict();
 
-     virtual Builder::ArrayItemContext StartArray();
-     virtual Builder& EndArray();
-     Node Build();
- private:
-     Builder& builder_;
+    Builder& EndDict();
+
+    Builder::ArrayItemContext StartArray();
+    Builder& EndArray();
+    Node Build();
+ protected:
+    Builder& builder_;
  };
 
 // Context 1
@@ -147,14 +153,68 @@ public:
 
 private:
     Builder& builder_;
+};
 
+// 2
+class ChildKeyValueItemContext final : public CommonContext {
+public:
+    ChildKeyValueItemContext(Builder& builder)
+        : CommonContext(builder) {}
 
+    Builder& Value(Node::Value value) = delete;
+    Builder::DictItemContext StartDict() = delete;
+    Builder::ArrayItemContext StartArray() = delete;
+    Builder& EndArray() = delete;
+    Node Build() = delete;
+};
+
+// 1
 class ChildValueItemContext final : public CommonContext {
 public:
+    ChildValueItemContext(Builder& builder)
+        : CommonContext(builder) {}
 
-private:
-
+    // Вызов Value после Key - попадаешь в контекст №2
+    // Перекрытие имени базового класса
+    ChildKeyValueItemContext Value(Node::Value value);
+    Builder::ChildValueItemContext Key(std::string key) = delete;
+    Builder& EndDict() = delete;
+    Builder& EndArray() = delete;
+    Node Build() = delete;
 };
+
+// 3
+class ChildDictItemContext : public CommonContext {
+public:
+    ChildDictItemContext(Builder& builder)
+        : CommonContext(builder) {}
+
+    Builder& Value(Node::Value value) = delete;
+    Builder::DictItemContext StartDict() = delete;
+    Builder::ArrayItemContext StartArray() = delete;
+    Builder& EndArray() = delete;
+    Node Build() = delete;
+};
+
+// 4
+class ChildArrayItemContext : public CommonContext {
+    ChildArrayItemContext(Builder& builder)
+        : CommonContext(builder) {}
+
+    Builder::ChildValueItemContext Key(std::string key) = delete;
+    Builder& EndDict() = delete;
+    Node Build() = delete;
+};
+
+// 5
+class ChildArrayItemValueContext : public CommonContext {
+    ChildArrayItemValueContext(Builder& builder)
+        : CommonContext(builder) {}
+
+    ChildValueItemContext Key(std::string key) = delete;
+    ChildArrayItemValueContext Value(Node::Value value);
+    Builder& EndDict() = delete;
+    Node Build() = delete;
 };
 
 
