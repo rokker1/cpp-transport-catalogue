@@ -110,26 +110,27 @@ Builder& Builder::Value(Node::Value value) {
 }
 
 Builder::ChildDictItemContext Builder::StartDict() {
-    if(nodes_stack_.empty() && no_content_) {
-        root_ = std::move(json::Node(json::Dict{}));
-        nodes_stack_.emplace_back(&root_);
-    } else if(!nodes_stack_.empty() && nodes_stack_.back()->IsNull()) {
-        // случай когда закрываем открытый ключ
-        // указатель на нулевую ноду стал указателем на словарь
-        // далее открыт словарь
-        *nodes_stack_.back() = std::move(Node(json::Dict{}));
-    } else if(!nodes_stack_.empty() && nodes_stack_.back()->IsArray()) {
-        // случай когда добавляем в массив (Array) node типа dict
-        //nodes_stack_.emplace_back()
-        Node& inserted_node = nodes_stack_.back()->AsArray().emplace_back(json::Dict{}); // тут
-        //в стек помещается адрес только что вставленного словаря
-        nodes_stack_.push_back(&inserted_node);
-    } else {
-        throw std::logic_error("error");
-    }
-    //debug
-    // json::Print(json::Document(root_), std::cerr);
-    return ChildDictItemContext{*this};
+    // if(nodes_stack_.empty() && no_content_) {
+    //     root_ = std::move(json::Node(json::Dict{}));
+    //     nodes_stack_.emplace_back(&root_);
+    // } else if(!nodes_stack_.empty() && nodes_stack_.back()->IsNull()) {
+    //     // случай когда закрываем открытый ключ
+    //     // указатель на нулевую ноду стал указателем на словарь
+    //     // далее открыт словарь
+    //     *nodes_stack_.back() = std::move(Node(json::Dict{})); 
+    // } else if(!nodes_stack_.empty() && nodes_stack_.back()->IsArray()) {
+    //     // случай когда добавляем в массив (Array) node типа dict
+    //     //nodes_stack_.emplace_back()
+    //     Node& inserted_node = nodes_stack_.back()->AsArray().emplace_back(json::Dict{}); // тут
+    //     //в стек помещается адрес только что вставленного словаря
+    //     nodes_stack_.push_back(&inserted_node);
+    // } else {
+    //     throw std::logic_error("error");
+    // }
+    // //debug
+    // // json::Print(json::Document(root_), std::cerr);
+    // return ChildDictItemContext{*this};
+    return std::get<Builder::ChildDictItemContext>(StartCollection(json::Node{json::Dict{}}));
 }
 /*
 StartArray() и StartDict() отличаются только в строках 88 и 110, 
@@ -137,18 +138,45 @@ StartArray() и StartDict() отличаются только в строках 
  можно организовать вспомогательный метод по добавлению объекта, а переменную передавать параметром
 */
 Builder::ChildArrayItemContext Builder::StartArray() {
+    // if(nodes_stack_.empty() && no_content_) {
+    //     root_ = std::move(json::Node(json::Array{}));
+    //     nodes_stack_.emplace_back(&root_);
+    // } else if(!nodes_stack_.empty() && nodes_stack_.back()->IsNull()) {
+    //     // случай когда закрываем открытый ключ
+    //     // указатель на нулевую ноду стал указателем на Array
+    //     // далее открыт массив
+    //     *nodes_stack_.back() = std::move(Node(json::Array{})); // тут
+    // } else if(!nodes_stack_.empty() && nodes_stack_.back()->IsArray()) {
+    //     // случай когда добавляем в массив (Array) node типа dict
+    //     //nodes_stack_.emplace_back()
+    //     Node inserted_node = nodes_stack_.back()->AsArray().emplace_back(json::Array{}); // тут
+    //     //в стек помещается адрес только что вставленного словаря
+    //     nodes_stack_.push_back(&inserted_node);
+
+    //     //вот тут надо вернуть конктекст
+
+    // } else {
+    //     throw std::logic_error("error");
+    // }        
+    // //debug
+    // // json::Print(json::Document(root_), std::cerr);
+    // return ChildArrayItemContext{*this};
+    return std::get<Builder::ChildArrayItemContext>(StartCollection(json::Node{json::Array{}}));
+}
+
+std::variant<Builder::ChildDictItemContext, Builder::ChildArrayItemContext> Builder::StartCollection(json::Node node) {
     if(nodes_stack_.empty() && no_content_) {
-        root_ = std::move(json::Node(json::Array{}));
+        root_ = std::move(node);
         nodes_stack_.emplace_back(&root_);
     } else if(!nodes_stack_.empty() && nodes_stack_.back()->IsNull()) {
         // случай когда закрываем открытый ключ
         // указатель на нулевую ноду стал указателем на Array
         // далее открыт массив
-        *nodes_stack_.back() = std::move(Node(json::Array{}));
+        *nodes_stack_.back() = std::move(node); // тут
     } else if(!nodes_stack_.empty() && nodes_stack_.back()->IsArray()) {
         // случай когда добавляем в массив (Array) node типа dict
         //nodes_stack_.emplace_back()
-        Node inserted_node = nodes_stack_.back()->AsArray().emplace_back(json::Array{}); // тут
+        Node inserted_node = nodes_stack_.back()->AsArray().emplace_back(node); // тут
         //в стек помещается адрес только что вставленного словаря
         nodes_stack_.push_back(&inserted_node);
 
@@ -159,8 +187,15 @@ Builder::ChildArrayItemContext Builder::StartArray() {
     }        
     //debug
     // json::Print(json::Document(root_), std::cerr);
-    return ChildArrayItemContext{*this};
+    if(node.IsArray()) {
+        return ChildArrayItemContext{*this}; 
+    } else if (node.IsDict()) {
+        return ChildDictItemContext{*this};
+    } else {
+        throw std::logic_error("bad node in return Builder::StartCollection().");
+    }
 }
+
 Builder& Builder::EndDict() {
     if(!nodes_stack_.empty() && !nodes_stack_.back()->IsDict()) {
         // попытка добавления ключа, если словарь не открывался
