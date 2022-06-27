@@ -198,9 +198,10 @@ public:
 
 // 4
 class ChildArrayItemContext : public CommonContext {
+public:
     ChildArrayItemContext(Builder& builder)
         : CommonContext(builder) {}
-
+    ChildArrayItemValueContext Value(Node::Value value);
     Builder::ChildValueItemContext Key(std::string key) = delete;
     Builder& EndDict() = delete;
     Node Build() = delete;
@@ -208,6 +209,7 @@ class ChildArrayItemContext : public CommonContext {
 
 // 5
 class ChildArrayItemValueContext : public CommonContext {
+public:
     ChildArrayItemValueContext(Builder& builder)
         : CommonContext(builder) {}
 
@@ -216,11 +218,5 @@ class ChildArrayItemValueContext : public CommonContext {
     Builder& EndDict() = delete;
     Node Build() = delete;
 };
-
-
-
 };
-
-
-
 } // namespace json

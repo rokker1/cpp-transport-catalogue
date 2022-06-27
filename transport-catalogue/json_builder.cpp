@@ -34,6 +34,10 @@ Builder::ChildKeyValueItemContext Builder::ChildValueItemContext::Value(Node::Va
     return builder_.Value(value);
 }
 
+Builder::ChildArrayItemValueContext Builder::ChildArrayItemContext::Value(Node::Value value) {
+    return builder_.Value(value);
+}
+
 Builder::ChildArrayItemValueContext Builder::ChildArrayItemValueContext::Value(Node::Value value) {
     return builder_.Value(value);
 }
