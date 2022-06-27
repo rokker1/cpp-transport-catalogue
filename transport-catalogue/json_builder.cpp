@@ -10,7 +10,7 @@ Builder& Builder::CommonContext::Value(Node::Value value) {
     return builder_.Value(value);
 }
 
-Builder::DictItemContext Builder::CommonContext::StartDict() {
+Builder::ChildDictItemContext Builder::CommonContext::StartDict() {
     return builder_.StartDict();
 }
 
@@ -18,16 +18,12 @@ Builder& Builder::CommonContext::EndDict() {
     return builder_.EndDict();
 }
 
-Builder::ArrayItemContext Builder::CommonContext::StartArray() {
+Builder::ChildArrayItemContext Builder::CommonContext::StartArray() {
     return builder_.StartArray();
 }
 
 Builder& Builder::CommonContext::EndArray() {
     return builder_.EndArray();
-}
-
-Node Builder::CommonContext::Build() {
-    return builder_.Build();
 }
 
 Builder::ChildKeyValueItemContext Builder::ChildValueItemContext::Value(Node::Value value) {
@@ -113,7 +109,7 @@ Builder& Builder::Value(Node::Value value) {
     return *this;
 }
 
-Builder::DictItemContext Builder::StartDict() {
+Builder::ChildDictItemContext Builder::StartDict() {
     if(nodes_stack_.empty() && no_content_) {
         root_ = std::move(json::Node(json::Dict{}));
         nodes_stack_.emplace_back(&root_);
@@ -133,14 +129,14 @@ Builder::DictItemContext Builder::StartDict() {
     }
     //debug
     // json::Print(json::Document(root_), std::cerr);
-    return DictItemContext{*this};
+    return ChildDictItemContext{*this};
 }
 /*
 StartArray() и StartDict() отличаются только в строках 88 и 110, 
 где в контейнер помещается значение определенного тип,
  можно организовать вспомогательный метод по добавлению объекта, а переменную передавать параметром
 */
-Builder::ArrayItemContext Builder::StartArray() {
+Builder::ChildArrayItemContext Builder::StartArray() {
     if(nodes_stack_.empty() && no_content_) {
         root_ = std::move(json::Node(json::Array{}));
         nodes_stack_.emplace_back(&root_);
@@ -163,7 +159,7 @@ Builder::ArrayItemContext Builder::StartArray() {
     }        
     //debug
     // json::Print(json::Document(root_), std::cerr);
-    return ArrayItemContext{*this};
+    return ChildArrayItemContext{*this};
 }
 Builder& Builder::EndDict() {
     if(!nodes_stack_.empty() && !nodes_stack_.back()->IsDict()) {
@@ -200,58 +196,4 @@ Node Builder::Build() {
     return root_;
 }
 
-Builder::DictItemContext::DictItemContext(Builder& builder)
-    : builder_(builder) {}
-
-// Builder::ValueItemContext Builder::DictItemContext::Key(std::string key) {
-//     return builder_.Key(key);
-// }
-
-Builder& Builder::DictItemContext::EndDict() {
-    return builder_.EndDict();
-}
-
-Builder::KeyValueItemContext Builder::ValueItemContext::Value(Node::Value value) {
-    return builder_.Value(value);
-}
-
-Builder::ArrayValueItemContext Builder::ArrayItemContext::Value(Node::Value value) {
-    return builder_.Value(value);
-}
-Builder::DictItemContext Builder::ArrayItemContext::StartDict() {
-    return builder_.StartDict();
-}
-Builder::ArrayItemContext Builder::ArrayItemContext::StartArray() {
-    return builder_.StartArray();
-}
-Builder& Builder::ArrayItemContext::EndArray() {
-    return builder_.EndArray();
-}
-
-Builder::DictItemContext Builder::ValueItemContext::StartDict() {
-    return builder_.StartDict();
-}
-Builder::ArrayItemContext Builder::ValueItemContext::StartArray() {
-    return builder_.StartArray();
-}
-
-// Builder::ChildValueItemContext Builder::KeyValueItemContext::Key(std::string key) {
-//     return builder_.Key(key);
-// }
-Builder& Builder::KeyValueItemContext::EndDict() {
-    return builder_.EndDict();
-}
-
-Builder::ArrayValueItemContext Builder::ArrayValueItemContext::Value(Node::Value value) {
-    return builder_.Value(value);
-}
-Builder::DictItemContext Builder::ArrayValueItemContext::StartDict() {
-    return builder_.StartDict();
-}
-Builder::ArrayItemContext Builder::ArrayValueItemContext::StartArray() {
-    return builder_.StartArray();
-}
-Builder& Builder::ArrayValueItemContext::EndArray() {
-    return builder_.EndArray();
-}
 } // namespace json

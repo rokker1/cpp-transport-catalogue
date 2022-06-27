@@ -22,12 +22,12 @@ using json::Node;
 // class ArrayValueItemContext; // 5
 
 
-class ValueItemContext2; // 1
-class KeyValueItemContext2; // 2
-class DictItemContext2; // 3
-class ArrayItemContext2; // 4
-class ArrayValueItemContext2; // 5
-class Builder;
+// class ValueItemContext2; // 1
+// class KeyValueItemContext2; // 2
+// class DictItemContext2; // 3
+// class ArrayItemContext2; // 4
+// class ArrayValueItemContext2; // 5
+// class Builder;
 
 //class ValueItemContext;
 
@@ -37,11 +37,11 @@ class Builder {
 // friend class CommonContext;
 public:
 // declaration
-class ValueItemContext; // 1
-class KeyValueItemContext; // 2
-class DictItemContext; // 3
-class ArrayItemContext; // 4
-class ArrayValueItemContext; // 5
+// class ValueItemContext; // 1
+// class KeyValueItemContext; // 2
+// class DictItemContext; // 3
+// class ArrayItemContext; // 4
+// class ArrayValueItemContext; // 5
 
 class ChildValueItemContext; // 1
 class ChildKeyValueItemContext; // 2
@@ -52,10 +52,10 @@ class ChildArrayItemValueContext; // 5
     ChildValueItemContext Key(std::string key);
     Builder& Value(Node::Value value);
 
-    DictItemContext StartDict();
+    ChildDictItemContext StartDict();
     Builder& EndDict();
 
-    ArrayItemContext StartArray();
+    ChildArrayItemContext StartArray();
     Builder& EndArray();
     Node Build();
 
@@ -69,91 +69,21 @@ private:
 
 public:
 
- class CommonContext {
- public:
-    CommonContext(Builder& builder)
-        : builder_(builder) {}
+    class CommonContext {
+    public:
+        CommonContext(Builder& builder)
+            : builder_(builder) {}
 
-    Builder::ChildValueItemContext Key(std::string key);
+        Builder::ChildValueItemContext Key(std::string key);
+        Builder& Value(Node::Value value);
+        Builder::ChildDictItemContext StartDict();
+        Builder& EndDict();
+        Builder::ChildArrayItemContext StartArray();
+        Builder& EndArray();
 
-    Builder& Value(Node::Value value);
-
-    Builder::DictItemContext StartDict();
-
-    Builder& EndDict();
-
-    Builder::ArrayItemContext StartArray();
-    Builder& EndArray();
-    Node Build();
- protected:
-    Builder& builder_;
- };
-
-// Context 1
-class ValueItemContext {
-public:
-    ValueItemContext(Builder& b)
-        : builder_(b) {}
-    KeyValueItemContext Value(Node::Value value);
-    DictItemContext StartDict();
-    ArrayItemContext StartArray();
-   
-private:
-   Builder& builder_;
-};
-
-// констекст для случая 3
-class DictItemContext {
-public:
-    DictItemContext(Builder& builder);
-
-    ValueItemContext Key(std::string key);
-    Builder& EndDict();
-
-private:
-
-    Builder& builder_;
-};
-
-class ArrayItemContext {
-public:
-    ArrayItemContext(Builder& b)
-        : builder_(b) {}
-
-    // тут
-    ArrayValueItemContext Value(Node::Value value);
-    DictItemContext StartDict() ;
-    ArrayItemContext StartArray() ;
-    Builder& EndArray() ;
-
-private:
-    Builder& builder_;
-};
-
-class KeyValueItemContext {
-public:
-    KeyValueItemContext(Builder& b) 
-        : builder_(b) {}
-    
-    ValueItemContext Key(std::string key);
-    Builder& EndDict();
-
-private:
-    Builder& builder_;
-};
-
-class ArrayValueItemContext {
-public:
-    ArrayValueItemContext(Builder& b) 
-        : builder_(b) {}
-    ArrayValueItemContext Value(Node::Value value);
-    DictItemContext StartDict();
-    ArrayItemContext StartArray();
-    Builder& EndArray();
-
-private:
-    Builder& builder_;
-};
+    protected:
+        Builder& builder_;
+    };
 
 // 2
 class ChildKeyValueItemContext final : public CommonContext {
@@ -162,10 +92,10 @@ public:
         : CommonContext(builder) {}
 
     Builder& Value(Node::Value value) = delete;
-    Builder::DictItemContext StartDict() = delete;
-    Builder::ArrayItemContext StartArray() = delete;
+    Builder::ChildDictItemContext StartDict() = delete;
+    Builder::ChildArrayItemContext StartArray() = delete;
     Builder& EndArray() = delete;
-    Node Build() = delete;
+
 };
 
 // 1
@@ -180,7 +110,7 @@ public:
     Builder::ChildValueItemContext Key(std::string key) = delete;
     Builder& EndDict() = delete;
     Builder& EndArray() = delete;
-    Node Build() = delete;
+
 };
 
 // 3
@@ -190,10 +120,10 @@ public:
         : CommonContext(builder) {}
 
     Builder& Value(Node::Value value) = delete;
-    Builder::DictItemContext StartDict() = delete;
-    Builder::ArrayItemContext StartArray() = delete;
+    Builder::ChildDictItemContext StartDict() = delete;
+    Builder::ChildArrayItemContext StartArray() = delete;
     Builder& EndArray() = delete;
-    Node Build() = delete;
+
 };
 
 // 4
@@ -204,7 +134,7 @@ public:
     ChildArrayItemValueContext Value(Node::Value value);
     Builder::ChildValueItemContext Key(std::string key) = delete;
     Builder& EndDict() = delete;
-    Node Build() = delete;
+
 };
 
 // 5
@@ -216,7 +146,7 @@ public:
     ChildValueItemContext Key(std::string key) = delete;
     ChildArrayItemValueContext Value(Node::Value value);
     Builder& EndDict() = delete;
-    Node Build() = delete;
+
 };
 };
 } // namespace json
