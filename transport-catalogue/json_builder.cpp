@@ -1,7 +1,31 @@
 #include "json_builder.h"
 
 namespace json {
-    
+
+Builder::ValueItemContext Builder::CommonContext::Key(std::string key) {
+    return builder_.Key(key);
+
+}
+Builder::DictItemContext Builder::CommonContext::StartDict() {
+    return builder_.StartDict();
+}
+
+Builder& Builder::CommonContext::EndDict() {
+    return builder_.EndDict();
+}
+
+Builder::ArrayItemContext Builder::CommonContext::StartArray() {
+    return builder_.StartArray();
+}
+
+Builder& Builder::CommonContext::EndArray() {
+    return builder_.EndArray();
+}
+Node Builder::CommonContext::Build() {
+    return builder_.Build();
+}
+
+
 Builder::ValueItemContext Builder::Key(std::string key) {
     if(nodes_stack_.empty()) {
         throw std::logic_error("error");

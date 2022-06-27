@@ -14,7 +14,7 @@ using json::Node;
 /*
 все классы не используются отдельно от билдера, можно было бы спрятать их внутрь класса билдера, 
 организовать еще один класс, который бы содержал все возможные методы и был бы классом родителем для всех остальных методов
-*/
+// */
 // class ValueItemContext; // 1
 // class KeyValueItemContext; // 2
 // class DictItemContext; // 3
@@ -29,29 +29,20 @@ class ArrayItemContext2; // 4
 class ArrayValueItemContext2; // 5
 class Builder;
 
-class CommonContext {
-public:
-    virtual ValueItemContext2 Key(std::string key) = 0;
-    virtual Builder& Value(Node::Value value) = 0;
-    virtual DictItemContext2 StartDict() = 0;
-    virtual Builder& EndDict() = 0;
-    virtual ArrayItemContext2 StartArray() = 0;
-    virtual Builder& EndArray() = 0;
-    virtual Node Build() = 0;
-private:
-};
+//class ValueItemContext;
+
+
 
 class Builder {
-
+// friend class CommonContext;
+public:
 // declaration
 class ValueItemContext; // 1
 class KeyValueItemContext; // 2
 class DictItemContext; // 3
 class ArrayItemContext; // 4
 class ArrayValueItemContext; // 5
-
-public:
-    
+  
     ValueItemContext Key(std::string key);
     Builder& Value(Node::Value value);
 
@@ -70,6 +61,27 @@ private:
     std::vector<Node*> nodes_stack_;
     bool no_content_ = true;
 
+public:
+
+ class CommonContext {
+ public:
+     CommonContext(Builder& builder)
+         : builder_(builder) {}
+
+     virtual Builder::ValueItemContext Key(std::string key);
+
+     virtual Builder& Value(Node::Value value) = 0;
+    
+     virtual Builder::DictItemContext StartDict();
+
+     virtual Builder& EndDict();
+
+     virtual Builder::ArrayItemContext StartArray();
+     virtual Builder& EndArray();
+     Node Build();
+ private:
+     Builder& builder_;
+ };
 
 // Context 1
 class ValueItemContext {
@@ -135,7 +147,16 @@ public:
 
 private:
     Builder& builder_;
+
+
+class ChildValueItemContext final : public CommonContext {
+public:
+
+private:
+
 };
+};
+
 
 
 };
