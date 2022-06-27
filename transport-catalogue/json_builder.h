@@ -30,8 +30,6 @@ public:
     Builder& EndArray();
     Node Build();
 
-
-
 private:
     Node root_;
     std::vector<Node*> nodes_stack_;
