@@ -55,7 +55,7 @@ public:
 
     // ---- routing ----
     catalogue::RoutingSettings ReadRoutingSettings(const json::Document& document) const;
-
+    void SetRoutingSettings(catalogue::RoutingSettings settings, catalogue::TransportCatalogue& catalogue) const;
 private:
     std::deque<AddStopRequest> add_stop_requests_;
     std::deque<AddBusRequest> add_bus_requests_;

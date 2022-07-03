@@ -55,7 +55,9 @@ struct RouteDistanceHasher {
 
 class TransportCatalogue {
 public:
-    
+    TransportCatalogue() = default;
+    TransportCatalogue(RoutingSettings routing_settings);
+
     void AddBus(std::string_view name, const std::vector<std::string>& stops, BusType type);
 
     void AddStop(std::string_view name, Coordinates coordinates);
@@ -76,6 +78,7 @@ public:
     const std::unordered_map<const Stop*, std::set<const Bus*>>& GetStopsToBuses() const;
     const std::map<std::string_view, const Stop*>& GetStopnameToStops() const;
     
+    void SetRoutingSettings(RoutingSettings routing_settings);
 private:
     //все остановки в базе данных
     std::deque<Stop> stops_; 
@@ -96,6 +99,9 @@ private:
     uint64_t GetDistance(std::pair<const Stop*, const Stop*> p) const;
     
     BusStat ComputeBusInfo(std::string_view name) const;
+
+    RoutingSettings routing_settings_;
+    
 };        
 } // namespace catalogue
 

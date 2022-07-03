@@ -13,6 +13,7 @@ void JsonReader::ProcessBaseRequests(json::Document document, catalogue::Transpo
     assert(document.GetRoot().AsDict().count("base_requests"));
     ReadBaseRequests(document);
     FillCatalogueFromReader(catalogue);
+    SetRoutingSettings(ReadRoutingSettings(document), catalogue);
 }
 
 void JsonReader::ReadBaseRequests(json::Document document) {
@@ -261,4 +262,7 @@ catalogue::RoutingSettings JsonReader::ReadRoutingSettings(const json::Document&
     return settings;
 }
 
+void JsonReader::SetRoutingSettings(catalogue::RoutingSettings settings, catalogue::TransportCatalogue& catalogue) const {
+    catalogue.SetRoutingSettings(std::move(settings));
+}
 }

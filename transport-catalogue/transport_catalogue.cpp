@@ -177,6 +177,12 @@ const std::map<std::string_view, const Stop*>& TransportCatalogue::GetStopnameTo
     return stopname_to_stop_;
 }
 
+TransportCatalogue::TransportCatalogue(RoutingSettings routing_settings)
+    : routing_settings_(routing_settings) {
+}
+void TransportCatalogue::SetRoutingSettings(RoutingSettings routing_settings) {
+    routing_settings_ = std::move(routing_settings);
+}
 } // namespace catalogue
 
 
