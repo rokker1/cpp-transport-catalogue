@@ -14,7 +14,7 @@
 #include <set>
 #include <map>
 #include "domain.h"
-
+#include "router.h"
 
 namespace catalogue
 {
