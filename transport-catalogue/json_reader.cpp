@@ -143,6 +143,7 @@ JsonReader::JsonReader(json::Document document, catalogue::TransportCatalogue& c
 renderer::RenderSettings JsonReader::GetRenderSettings() const {
     return ReadRenderSettingsFromJSON(document_);
 }
+
 json::Document JsonReader::ProcessStatRequests(RequestHandler& handler) {
     json::Array answers_array{};
     
@@ -248,6 +249,16 @@ json::Node JsonReader::ConvertMapToJsonDict(int id, std::string map_as_string) {
             .EndDict().Build()
         };
     return answer;
+}
+
+catalogue::RoutingSettings JsonReader::ReadRoutingSettings(const json::Document& document) const {
+    catalogue::RoutingSettings settings;
+    assert(document.GetRoot().IsDict());
+    assert(document.GetRoot().AsDict().count("routing_settings") != 0);
+    const json::Node& json_settings = document.GetRoot().AsDict().at("routing_settings").AsDict();
+    settings.bus_wait_time = json_settings.AsDict().at("bus_wait_time").AsInt();
+    settings.bus_velocity = json_settings.AsDict().at("bus_velocity").AsInt();
+    return settings;
 }
 
 }

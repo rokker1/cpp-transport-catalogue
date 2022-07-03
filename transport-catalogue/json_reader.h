@@ -53,6 +53,9 @@ public:
     renderer::RenderSettings ReadRenderSettingsFromJSON(const json::Document& document) const;
     renderer::RenderSettings GetRenderSettings() const;
 
+    // ---- routing ----
+    catalogue::RoutingSettings ReadRoutingSettings(const json::Document& document) const;
+
 private:
     std::deque<AddStopRequest> add_stop_requests_;
     std::deque<AddBusRequest> add_bus_requests_;

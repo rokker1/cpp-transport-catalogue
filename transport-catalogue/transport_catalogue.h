@@ -23,7 +23,10 @@ using geo::Coordinates;
 using geo::ComputeDistance;
 
 
-
+struct RoutingSettings {
+    size_t bus_wait_time = 0;
+    size_t bus_velocity = 0;
+};
 
 struct BusStat {
     unsigned int stops_count = 0;
