@@ -175,6 +175,10 @@ json::Document JsonReader::ProcessStatRequests(RequestHandler& handler) {
             
             ProcessMapRequest(handler, stat_request, answers_array);
         
+        } else if (request_type == "Route"sv) {
+        
+            ProcessRouteRequest(handler, stat_request, answers_array);
+
         } else {
             throw std::logic_error("bad stat request");
         }
@@ -275,5 +279,13 @@ catalogue::RoutingSettings JsonReader::ReadRoutingSettings(const json::Document&
 
 void JsonReader::SetRoutingSettings(catalogue::RoutingSettings settings, catalogue::TransportCatalogue& catalogue) const {
     catalogue.SetRoutingSettings(std::move(settings));
+}
+
+void JsonReader::ProcessRouteRequest(RequestHandler& handler, const json::Node& stat_request, json::Array& answers_array) {
+    int id = stat_request.AsDict().at("id").AsInt();
+    std::string stop_from = stat_request.AsDict().at("from").AsString();
+    std::string stop_to = stat_request.AsDict().at("to").AsString();
+    std::optional<graph::Router<double>::RouteInfo> route_info = handler.GetRouteInfo(stop_from, stop_to);
+    
 }
 }

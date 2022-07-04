@@ -27,8 +27,8 @@ std::optional<StopInfo> RequestHandler::GetStopInfo(const std::string_view& stop
 }
 
 
-RequestHandler::RequestHandler(const TransportCatalogue& db, renderer::MapRenderer& renderer)
-    : db_(db), renderer_(renderer) 
+RequestHandler::RequestHandler(const TransportCatalogue& db, renderer::MapRenderer& renderer, graph::Router<double>& router)
+    : db_(db), renderer_(renderer), router_(router) 
 {
 }
 
@@ -44,4 +44,13 @@ std::string RequestHandler::RenderMapToString() {
     renderer_.Render({out, 0, 0});
 
     return out.str();
+}
+
+std::optional<graph::Router<double>::RouteInfo> RequestHandler::GetRouteInfo(std::string_view stop_from, std::string_view stop_to) const {
+    // информация о маршруте в представлении graph::router
+    std::optional<graph::Router<double>::RouteInfo> route_info = router_.BuildRoute(
+        db_.GetStopVertexIndex(stop_from),
+        db_.GetStopVertexIndex(stop_to)
+    );
+    return route_info;
 }

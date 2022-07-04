@@ -46,6 +46,10 @@ struct StopInfo {
     bool IsExsists = false; 
 };
 
+struct RouteInfo {
+
+};
+
 struct RouteDistanceHasher {
     size_t operator()(std::pair<const Stop*, const Stop*> p) const {
         std::hash<const void*> ptr_hasher{}; // объект - хешер
@@ -86,6 +90,7 @@ public:
 
     template <typename Weight>
     const graph::DirectedWeightedGraph<Weight>& GetRouteGraph() const;
+    graph::VertexId GetStopVertexIndex(std::string_view stop_name) const;
 private:
     //все остановки в базе данных
     std::deque<Stop> stops_; 
@@ -113,7 +118,7 @@ private:
     std::deque<const Bus*> edge_index_to_bus_;
     //данный словарь хранит ид "приёмных" остановок - с четными ид.
     std::map<std::string_view, graph::VertexId> stopname_to_vertex_id_;
-    graph::VertexId GetStopVertexIndex(std::string_view stop_name) const;
+    
 
     
 };  
