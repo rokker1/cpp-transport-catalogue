@@ -211,18 +211,21 @@ void TransportCatalogue::AddBusEdges(std::string_view name) {
 
     if(bus->bus_type_ == BusType::CYCLED) {
         double current_distance = 0.0;
-
+        int span_count = 0;
         for(auto it_from = stops.begin(); it_from != std::prev(stops.end()); ++it_from) {
             for(auto it_to = std::next(it_from); it_to != stops.end(); ++it_to) {
                 current_distance = current_distance + GetDistance({*(std::prev(it_to)), *it_to});
+                ++span_count;
                 graph::EdgeId edge_id = route_graph_.AddEdge({
                     GetStopVertexIndex((*it_from)->name_) + 1,
                     GetStopVertexIndex((*it_to)->name_),
                     current_distance / routing_settings_.bus_velocity
+                    // вот здесь - помимо времени маршрута нужно добавить число прогонов.
                 });
                 edge_index_to_bus_.push_back(bus);
             }
             current_distance = 0.0;
+            span_count = 0;
         }
     } else {
         double current_distance = 0.0;
@@ -263,6 +266,32 @@ graph::VertexId TransportCatalogue::GetStopVertexIndex(std::string_view stop_nam
     return stopname_to_vertex_id_.at(stop_name);
 }
 
+const Bus* TransportCatalogue::GetBusByEdgeIndex(graph::EdgeId edge_id) const {
+    if(edge_id < edge_index_to_bus_.size()) {
+        return edge_index_to_bus_[edge_id];
+    } else {
+        throw std::logic_error("Bad EdgeId requested!");
+    }
+}
+
+const graph::Edge<double>& TransportCatalogue::GetEdgeByIndex(graph::EdgeId edge_id) const {
+    return route_graph_.GetEdge(edge_id);
+}
+
+int TransportCatalogue::ComputeRouteSpanBetweenGraphVertices(
+                    const Bus* bus
+                    , graph::VertexId vertex_from
+                    , graph::VertexId vertex_to) const
+{
+    const Stop* stop_from = vertex_index_to_stop_[vertex_from];
+    const Stop* stop_to = vertex_index_to_stop_[vertex_to];
+
+    // вычислить расстояние между двумя указателями в объекте Bus
+    auto it_from = std::find(bus->stops_.begin(), bus->stops_.end(), stop_from);
+    auto it_to = std::find(it_from, bus->stops_.end(), stop_to);
+    // неверный подход
+    return std::distance(it_from, it_to); // заглушка
+}
 
 } // namespace catalogue
 

@@ -91,6 +91,11 @@ public:
     template <typename Weight>
     const graph::DirectedWeightedGraph<Weight>& GetRouteGraph() const;
     graph::VertexId GetStopVertexIndex(std::string_view stop_name) const;
+    const Bus* GetBusByEdgeIndex(graph::EdgeId edge_id) const;
+    const graph::Edge<double>& GetEdgeByIndex(graph::EdgeId edge_id) const;
+    int ComputeRouteSpanBetweenGraphVertices(const Bus* bus
+                                            , graph::VertexId vertex_from
+                                            , graph::VertexId vertex_to) const;
 private:
     //все остановки в базе данных
     std::deque<Stop> stops_; 

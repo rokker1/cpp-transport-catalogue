@@ -68,6 +68,8 @@ private:
     json::Node ConvertBusStatToJsonDict(int id, std::optional<BusStat> bus_stat);
     json::Node ConvertStopInfoToJsonDict(int id, std::optional<StopInfo> bus_stat);
     json::Node ConvertMapToJsonDict(int id, std::string map_as_string);
+    json::Node ConvertRouteInfoToJsonDict(int id, 
+                std::optional<graph::Router<double>::RouteInfo> route_info);
 
     void ProcessBusStatRequest(RequestHandler& handler, const json::Node& stat_request, json::Array& answers_array);
     void ProcessStopInfoRequest(RequestHandler& handler, const json::Node& stat_request, json::Array& answers_array);

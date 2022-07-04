@@ -41,8 +41,27 @@ struct CoordinatesHasher {
     }
 };
 
-struct RouteWeight {
+struct BusRouteWeight {
     double time = 0.0;
+    int span = 0;
+
+bool operator<(const BusRouteWeight& other) {
+    return time < other.time;
+}
+
+bool operator>(const BusRouteWeight& other) {
+    return time > other.time;
+}
+
+bool operator<=(const BusRouteWeight& other) {
+    return !(time > other.time);
+}
+
+bool operator>=(const BusRouteWeight& other) {
+    return !(time < other.time);
+}
+
+
 };
 
 constexpr double BUS_VELOCITY_MULTIPLIER = 100.0 / 6.0;

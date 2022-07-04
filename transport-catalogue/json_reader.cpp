@@ -73,8 +73,6 @@ void JsonReader::FillCatalogueFromReader(catalogue::TransportCatalogue& catalogu
 
     catalogue.AddBusWaitEdges();
 
-    //add verices
-    //add internal edges = bus-wait
     for(const auto& [name, stops, type] : add_bus_requests_) {
         BusType bus_type;
         if(type) {
@@ -85,7 +83,6 @@ void JsonReader::FillCatalogueFromReader(catalogue::TransportCatalogue& catalogu
         catalogue.AddBus(name, stops, bus_type);
         catalogue.AddBusEdges(name);
     }
-    //add edges
 }
 
 renderer::RenderSettings JsonReader::ReadRenderSettingsFromJSON(const json::Document& document) const {
@@ -286,6 +283,70 @@ void JsonReader::ProcessRouteRequest(RequestHandler& handler, const json::Node& 
     std::string stop_from = stat_request.AsDict().at("from").AsString();
     std::string stop_to = stat_request.AsDict().at("to").AsString();
     std::optional<graph::Router<double>::RouteInfo> route_info = handler.GetRouteInfo(stop_from, stop_to);
+    answers_array.push_back(std::move(ConvertRouteInfoToJsonDict(id, route_info)));
+}
+
+json::Node JsonReader::ConvertRouteInfoToJsonDict(int id, 
+            std::optional<graph::Router<double>::RouteInfo> route_info) {
     
+    // ответ в любом случае содержит ид запроса
+    json::Node answer = json::Builder{}
+        .StartDict()
+            .Key("request_id").Value(id)
+        .EndDict()
+    .Build();
+    
+    if(route_info.has_value()) {
+        // маршрут существует и построен
+        // добавим пару "полное время поездки"
+        answer.AsDict().emplace("total_time", route_info->weight);
+        answer.AsDict().emplace("items", json::Array{});
+
+        // цикл по участкам (ребрам) поздки
+        for(const graph::EdgeId edge_id : route_info->edges) {
+            // item begins
+            //тип данного участка пути
+            std::string type;
+
+            // временно запомнить ссылку на ребро
+            const graph::Edge<double>& edge = catalogue_.GetEdgeByIndex(edge_id);
+            //время данного участка пути
+            double time = edge.weight;
+
+            if(catalogue_.GetBusByEdgeIndex(edge_id)) {
+                // это ребро графа соответствует поездке на автобусе
+                type = std::move("Bus");
+                std::string bus_name = catalogue_.GetBusByEdgeIndex(edge_id)->name_;
+
+                // ид начальной вершины графа (участка поездки)
+                graph::VertexId vertex_from = edge.from;
+                // ид конечной вершины графа (участка поездки)
+                graph::VertexId vertex_to = edge.to;
+                
+                // вычислить количество остановок, которое нужно проехать
+                // по индексам начальной и конечной вершин графа (остановок)
+                // int span = catalogue_.ComputeRouteSpanBetweenGraphVertices(
+                //     // передать два индекса вершин графа
+                //     catalogue_.GetBusByEdgeIndex(edge_id),
+                //     edge.from, edge.to
+                // );
+                
+                // int span = BusRouteWeight.span;
+
+                //debug
+                //std::cout << "Span :" << span << std::endl;
+            } else {
+                // то ребро соответствует ожижданию на остановке
+                type = std::move("Wait");
+
+            }
+
+        }
+
+    } else {
+        // маршрут не существует
+        answer.AsDict().emplace("error_message", "not found");
+    }
+    return answer;
 }
 }
