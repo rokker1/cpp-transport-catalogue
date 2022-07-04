@@ -183,6 +183,25 @@ TransportCatalogue::TransportCatalogue(RoutingSettings routing_settings)
 void TransportCatalogue::SetRoutingSettings(RoutingSettings routing_settings) {
     routing_settings_ = std::move(routing_settings);
 }
+
+void TransportCatalogue::AddStopVertex(const Stop* stop) {
+    vertex_index_to_stop_.push_back(stop);
+    vertex_index_to_stop_.push_back(stop);
+    //Сохраняем только четные ид - приемные остановки, 
+    //"исхожящие" вершины можно получить прибавив единицу к ид.
+    stopname_to_vertex_id_.emplace(stop->name_, vertex_index_to_stop_.size() - 2);
+}
+
+void TransportCatalogue::AddBusWaitEdges() {
+    edge_index_to_bus_.resize(std::pow(stopname_to_stop_.size(), 3));
+    //вызов конструктора графа для известного на данный момент числа вершин графа
+    route_graph_ = std::move(graph::DirectedWeightedGraph<RouteWeight>(vertex_index_to_stop_.size()));
+    for(graph::VertexId vertex_from_id = 0; vertex_from_id < vertex_index_to_stop_.size(); vertex_from_id += 2) {
+        graph::EdgeId edge_id = route_graph_.AddEdge(graph::Edge<RouteWeight>{vertex_from_id, vertex_from_id + 1, routing_settings_.bus_wait_time});
+        // строка ниже - лишняя, но пусть будет.
+        edge_index_to_bus_[edge_id] = nullptr;
+    }
+}
 } // namespace catalogue
 
 

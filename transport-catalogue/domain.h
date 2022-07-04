@@ -40,3 +40,7 @@ struct CoordinatesHasher {
         return PRIME * ptr_hasher(c.lat) + ptr_hasher(c.lng);
     }
 };
+
+struct RouteWeight {
+    double time = 0.0;
+};

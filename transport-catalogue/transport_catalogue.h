@@ -13,6 +13,7 @@
 #include <functional>
 #include <set>
 #include <map>
+#include <cmath>
 #include "domain.h"
 #include "router.h"
 
@@ -24,8 +25,8 @@ using geo::ComputeDistance;
 
 
 struct RoutingSettings {
-    size_t bus_wait_time = 0;
-    size_t bus_velocity = 0;
+    double bus_wait_time = 0;
+    double bus_velocity = 0;
 };
 
 struct BusStat {
@@ -79,6 +80,8 @@ public:
     const std::map<std::string_view, const Stop*>& GetStopnameToStops() const;
     
     void SetRoutingSettings(RoutingSettings routing_settings);
+    void AddStopVertex(const Stop*);
+    void AddBusWaitEdges();
 private:
     //все остановки в базе данных
     std::deque<Stop> stops_; 
@@ -101,7 +104,11 @@ private:
     BusStat ComputeBusInfo(std::string_view name) const;
 
     RoutingSettings routing_settings_;
-    
+    graph::DirectedWeightedGraph<RouteWeight> route_graph_;
+    std::deque<const Stop*> vertex_index_to_stop_;
+    std::deque<const Bus*> edge_index_to_bus_;
+    //данный словарь хранит ид "приёмных" остановок - с четными ид.
+    std::map<std::string_view, graph::VertexId> stopname_to_vertex_id_;
 };        
 } // namespace catalogue
 

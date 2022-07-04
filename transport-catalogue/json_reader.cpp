@@ -11,9 +11,10 @@ namespace json_reader {
 void JsonReader::ProcessBaseRequests(json::Document document, catalogue::TransportCatalogue& catalogue) {
     assert(document.GetRoot().IsDict());
     assert(document.GetRoot().AsDict().count("base_requests"));
+    SetRoutingSettings(ReadRoutingSettings(document), catalogue);
     ReadBaseRequests(document);
     FillCatalogueFromReader(catalogue);
-    SetRoutingSettings(ReadRoutingSettings(document), catalogue);
+    
 }
 
 void JsonReader::ReadBaseRequests(json::Document document) {
@@ -65,7 +66,15 @@ void JsonReader::FillCatalogueFromReader(catalogue::TransportCatalogue& catalogu
             const Stop* stop_to = catalogue.FindStop(name_to);
             catalogue.SetDistance({stop_from, stop_to}, distance);
         }
+
+        catalogue.AddStopVertex(stop_from);
+        
     }
+
+    catalogue.AddBusWaitEdges();
+    
+    //add verices
+    //add internal edges = bus-wait
     for(const auto& [name, stops, type] : add_bus_requests_) {
         BusType bus_type;
         if(type) {
@@ -75,6 +84,7 @@ void JsonReader::FillCatalogueFromReader(catalogue::TransportCatalogue& catalogu
         }
         catalogue.AddBus(name, stops, bus_type);
     }
+    //add edges
 }
 
 renderer::RenderSettings JsonReader::ReadRenderSettingsFromJSON(const json::Document& document) const {
