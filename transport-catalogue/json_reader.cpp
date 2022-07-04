@@ -72,7 +72,7 @@ void JsonReader::FillCatalogueFromReader(catalogue::TransportCatalogue& catalogu
     }
 
     catalogue.AddBusWaitEdges();
-    
+
     //add verices
     //add internal edges = bus-wait
     for(const auto& [name, stops, type] : add_bus_requests_) {
@@ -83,6 +83,7 @@ void JsonReader::FillCatalogueFromReader(catalogue::TransportCatalogue& catalogu
             bus_type = BusType::ORDINARY;
         }
         catalogue.AddBus(name, stops, bus_type);
+        catalogue.AddBusEdges(name);
     }
     //add edges
 }
@@ -268,7 +269,7 @@ catalogue::RoutingSettings JsonReader::ReadRoutingSettings(const json::Document&
     assert(document.GetRoot().AsDict().count("routing_settings") != 0);
     const json::Node& json_settings = document.GetRoot().AsDict().at("routing_settings").AsDict();
     settings.bus_wait_time = json_settings.AsDict().at("bus_wait_time").AsInt();
-    settings.bus_velocity = json_settings.AsDict().at("bus_velocity").AsInt();
+    settings.bus_velocity = json_settings.AsDict().at("bus_velocity").AsInt() * BUS_VELOCITY_MULTIPLIER;
     return settings;
 }
 

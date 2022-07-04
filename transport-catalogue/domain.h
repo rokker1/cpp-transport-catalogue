@@ -44,3 +44,5 @@ struct CoordinatesHasher {
 struct RouteWeight {
     double time = 0.0;
 };
+
+constexpr double BUS_VELOCITY_MULTIPLIER = 100.0 / 6.0;

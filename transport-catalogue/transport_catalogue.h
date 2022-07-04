@@ -82,6 +82,7 @@ public:
     void SetRoutingSettings(RoutingSettings routing_settings);
     void AddStopVertex(const Stop*);
     void AddBusWaitEdges();
+    void AddBusEdges(std::string_view name);
 private:
     //все остановки в базе данных
     std::deque<Stop> stops_; 
@@ -109,6 +110,7 @@ private:
     std::deque<const Bus*> edge_index_to_bus_;
     //данный словарь хранит ид "приёмных" остановок - с четными ид.
     std::map<std::string_view, graph::VertexId> stopname_to_vertex_id_;
+    graph::VertexId GetStopVertexIndex(std::string_view stop_name) const;
 };        
 } // namespace catalogue
 

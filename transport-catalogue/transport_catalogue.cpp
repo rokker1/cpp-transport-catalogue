@@ -193,14 +193,74 @@ void TransportCatalogue::AddStopVertex(const Stop* stop) {
 }
 
 void TransportCatalogue::AddBusWaitEdges() {
-    edge_index_to_bus_.resize(std::pow(stopname_to_stop_.size(), 3));
+    //edge_index_to_bus_.resize(std::pow(stopname_to_stop_.size(), 3));
     //вызов конструктора графа для известного на данный момент числа вершин графа
     route_graph_ = std::move(graph::DirectedWeightedGraph<RouteWeight>(vertex_index_to_stop_.size()));
     for(graph::VertexId vertex_from_id = 0; vertex_from_id < vertex_index_to_stop_.size(); vertex_from_id += 2) {
         graph::EdgeId edge_id = route_graph_.AddEdge(graph::Edge<RouteWeight>{vertex_from_id, vertex_from_id + 1, routing_settings_.bus_wait_time});
-        // строка ниже - лишняя, но пусть будет.
-        edge_index_to_bus_[edge_id] = nullptr;
+        edge_index_to_bus_.push_back(nullptr);
     }
+}
+
+void TransportCatalogue::AddBusEdges(std::string_view name) {
+    if(busname_to_bus_.count(name) == 0) {
+        throw std::logic_error("No such bus");
+    }
+    const Bus* bus = busname_to_bus_.at(name);
+    const std::vector<const Stop*>& stops = bus->stops_;
+
+    if(bus->bus_type_ == BusType::CYCLED) {
+        double current_distance = 0.0;
+
+        for(auto it_from = stops.begin(); it_from != std::prev(stops.end()); ++it_from) {
+            for(auto it_to = std::next(it_from); it_to != stops.end(); ++it_to) {
+                current_distance = current_distance + GetDistance({*(std::prev(it_to)), *it_to});
+                graph::EdgeId edge_id = route_graph_.AddEdge({
+                    GetStopVertexIndex((*it_from)->name_) + 1,
+                    GetStopVertexIndex((*it_to)->name_),
+                    current_distance / routing_settings_.bus_velocity
+                });
+                edge_index_to_bus_.push_back(bus);
+            }
+            current_distance = 0.0;
+        }
+    } else {
+        double current_distance = 0.0;
+
+        for(auto it_from = stops.begin(); it_from != std::prev(stops.end()); ++it_from) {
+            for(auto it_to = std::next(it_from); it_to != stops.end(); ++it_to) {
+                current_distance = current_distance + GetDistance({*(std::prev(it_to)), *it_to});
+                route_graph_.AddEdge({
+                    GetStopVertexIndex((*it_from)->name_) + 1,
+                    GetStopVertexIndex((*it_to)->name_),
+                    current_distance / routing_settings_.bus_velocity
+                });
+                edge_index_to_bus_.push_back(bus);
+            }
+            current_distance = 0.0;
+        }
+
+        for(auto it_from = stops.rbegin(); it_from != std::prev(stops.rend()); ++it_from) {
+            for(auto it_to = std::next(it_from); it_to != stops.rend(); ++it_to) {
+                current_distance = current_distance + GetDistance({*(std::prev(it_to)), *it_to});
+                route_graph_.AddEdge({
+                    GetStopVertexIndex((*it_from)->name_) + 1,
+                    GetStopVertexIndex((*it_to)->name_),
+                    current_distance / routing_settings_.bus_velocity
+                });
+                edge_index_to_bus_.push_back(bus);
+            }
+            current_distance = 0.0;
+        }
+    }
+}
+
+
+graph::VertexId TransportCatalogue::GetStopVertexIndex(std::string_view stop_name) const {
+    if(stopname_to_vertex_id_.count(stop_name) == 0) {
+        throw std::logic_error("Invalid stop name - can't find VertexId");
+    }
+    return stopname_to_vertex_id_.at(stop_name);
 }
 } // namespace catalogue
 
