@@ -195,9 +195,9 @@ void TransportCatalogue::AddStopVertex(const Stop* stop) {
 void TransportCatalogue::AddBusWaitEdges() {
     //edge_index_to_bus_.resize(std::pow(stopname_to_stop_.size(), 3));
     //вызов конструктора графа для известного на данный момент числа вершин графа
-    route_graph_ = std::move(graph::DirectedWeightedGraph<RouteWeight>(vertex_index_to_stop_.size()));
+    route_graph_ = std::move(graph::DirectedWeightedGraph<double>(vertex_index_to_stop_.size()));
     for(graph::VertexId vertex_from_id = 0; vertex_from_id < vertex_index_to_stop_.size(); vertex_from_id += 2) {
-        graph::EdgeId edge_id = route_graph_.AddEdge(graph::Edge<RouteWeight>{vertex_from_id, vertex_from_id + 1, routing_settings_.bus_wait_time});
+        graph::EdgeId edge_id = route_graph_.AddEdge({vertex_from_id, vertex_from_id + 1, routing_settings_.bus_wait_time});
         edge_index_to_bus_.push_back(nullptr);
     }
 }
@@ -262,6 +262,8 @@ graph::VertexId TransportCatalogue::GetStopVertexIndex(std::string_view stop_nam
     }
     return stopname_to_vertex_id_.at(stop_name);
 }
+
+
 } // namespace catalogue
 
 

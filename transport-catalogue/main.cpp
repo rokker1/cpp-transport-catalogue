@@ -9,6 +9,8 @@ int main() {
       catalogue::TransportCatalogue cat;
       json_reader::JsonReader reader(doc, cat);
 
+      graph::Router<double> router(cat.GetRouteGraph<double>());
+
       renderer::MapRenderer renderer(reader.GetRenderSettings(), cat.GetBusesSorted());
 
       RequestHandler handler(cat, renderer);

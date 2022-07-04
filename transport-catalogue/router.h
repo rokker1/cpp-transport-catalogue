@@ -53,13 +53,13 @@ private:
         }
     }
 
-    void RelaxRoute(VertexId vertex_from, VertexId vertex_to, const RouteInternalData& route_from, 
+    void RelaxRoute(VertexId vertex_from, VertexId vertex_to, const RouteInternalData& route_from,
                     const RouteInternalData& route_to) {
         auto& route_relaxing = routes_internal_data_[vertex_from][vertex_to];
         const Weight candidate_weight = route_from.weight + route_to.weight;
         if (!route_relaxing || candidate_weight < route_relaxing->weight) {
             route_relaxing = {candidate_weight,
-                            route_to.prev_edge ? route_to.prev_edge : route_from.prev_edge};
+                              route_to.prev_edge ? route_to.prev_edge : route_from.prev_edge};
         }
     }
 
@@ -96,7 +96,7 @@ Router<Weight>::Router(const Graph& graph)
 
 template <typename Weight>
 std::optional<typename Router<Weight>::RouteInfo> Router<Weight>::BuildRoute(VertexId from,
-                                                                            VertexId to) const {
+                                                                             VertexId to) const {
     const auto& route_internal_data = routes_internal_data_.at(from).at(to);
     if (!route_internal_data) {
         return std::nullopt;
@@ -104,8 +104,8 @@ std::optional<typename Router<Weight>::RouteInfo> Router<Weight>::BuildRoute(Ver
     const Weight weight = route_internal_data->weight;
     std::vector<EdgeId> edges;
     for (std::optional<EdgeId> edge_id = route_internal_data->prev_edge;
-        edge_id;
-        edge_id = routes_internal_data_[from][graph_.GetEdge(*edge_id).from]->prev_edge)
+         edge_id;
+         edge_id = routes_internal_data_[from][graph_.GetEdge(*edge_id).from]->prev_edge)
     {
         edges.push_back(*edge_id);
     }
