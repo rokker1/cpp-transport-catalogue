@@ -197,7 +197,7 @@ void TransportCatalogue::AddBusWaitEdges() {
     //вызов конструктора графа для известного на данный момент числа вершин графа
     route_graph_ = std::move(graph::DirectedWeightedGraph<BusRouteWeight>(vertex_index_to_stop_.size()));
     for(graph::VertexId vertex_from_id = 0; vertex_from_id < vertex_index_to_stop_.size(); vertex_from_id += 2) {
-        graph::EdgeId edge_id = route_graph_.AddEdge({vertex_from_id, vertex_from_id + 1, routing_settings_.bus_wait_time});
+        route_graph_.AddEdge({vertex_from_id, vertex_from_id + 1, routing_settings_.bus_wait_time});
         edge_index_to_bus_.push_back(nullptr);
     }
 }
@@ -216,7 +216,7 @@ void TransportCatalogue::AddBusEdges(std::string_view name) {
             for(auto it_to = std::next(it_from); it_to != stops.end(); ++it_to) {
                 current_distance = current_distance + GetDistance({*(std::prev(it_to)), *it_to});
                 ++span_count;
-                graph::EdgeId edge_id = route_graph_.AddEdge({
+                route_graph_.AddEdge({
                     GetStopVertexIndex((*it_from)->name_) + 1,
                     GetStopVertexIndex((*it_to)->name_),
                     {
