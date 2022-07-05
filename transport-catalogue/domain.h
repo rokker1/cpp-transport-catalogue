@@ -61,6 +61,13 @@ bool operator>=(const BusRouteWeight& other) {
     return !(time < other.time);
 }
 
+bool operator==(const BusRouteWeight& other) {
+    return time == other.time;
+}
+
+bool operator!=(const BusRouteWeight& other) {
+    return time != other.time;
+}
 
 };
 
