@@ -9,7 +9,7 @@ int main() {
       catalogue::TransportCatalogue cat;
       json_reader::JsonReader reader(doc, cat);
 
-      graph::Router<double> router(cat.GetRouteGraph<double>());
+      graph::Router<BusRouteWeight> router(cat.GetRouteGraph<BusRouteWeight>());
 
       renderer::MapRenderer renderer(reader.GetRenderSettings(), cat.GetBusesSorted());
 

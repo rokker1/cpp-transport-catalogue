@@ -195,7 +195,7 @@ void TransportCatalogue::AddStopVertex(const Stop* stop) {
 void TransportCatalogue::AddBusWaitEdges() {
     //edge_index_to_bus_.resize(std::pow(stopname_to_stop_.size(), 3));
     //вызов конструктора графа для известного на данный момент числа вершин графа
-    route_graph_ = std::move(graph::DirectedWeightedGraph<double>(vertex_index_to_stop_.size()));
+    route_graph_ = std::move(graph::DirectedWeightedGraph<BusRouteWeight>(vertex_index_to_stop_.size()));
     for(graph::VertexId vertex_from_id = 0; vertex_from_id < vertex_index_to_stop_.size(); vertex_from_id += 2) {
         graph::EdgeId edge_id = route_graph_.AddEdge({vertex_from_id, vertex_from_id + 1, routing_settings_.bus_wait_time});
         edge_index_to_bus_.push_back(nullptr);
@@ -219,8 +219,10 @@ void TransportCatalogue::AddBusEdges(std::string_view name) {
                 graph::EdgeId edge_id = route_graph_.AddEdge({
                     GetStopVertexIndex((*it_from)->name_) + 1,
                     GetStopVertexIndex((*it_to)->name_),
-                    current_distance / routing_settings_.bus_velocity
-                    // вот здесь - помимо времени маршрута нужно добавить число прогонов.
+                    {
+                        current_distance / routing_settings_.bus_velocity,
+                        span_count
+                    }
                 });
                 edge_index_to_bus_.push_back(bus);
             }
@@ -229,31 +231,41 @@ void TransportCatalogue::AddBusEdges(std::string_view name) {
         }
     } else {
         double current_distance = 0.0;
-
+        int span_count = 0;
         for(auto it_from = stops.begin(); it_from != std::prev(stops.end()); ++it_from) {
             for(auto it_to = std::next(it_from); it_to != stops.end(); ++it_to) {
                 current_distance = current_distance + GetDistance({*(std::prev(it_to)), *it_to});
+                ++span_count;
                 route_graph_.AddEdge({
                     GetStopVertexIndex((*it_from)->name_) + 1,
                     GetStopVertexIndex((*it_to)->name_),
-                    current_distance / routing_settings_.bus_velocity
+                    {
+                        current_distance / routing_settings_.bus_velocity,
+                        span_count
+                    }
                 });
                 edge_index_to_bus_.push_back(bus);
             }
             current_distance = 0.0;
+            span_count = 0;
         }
-
+        
         for(auto it_from = stops.rbegin(); it_from != std::prev(stops.rend()); ++it_from) {
             for(auto it_to = std::next(it_from); it_to != stops.rend(); ++it_to) {
                 current_distance = current_distance + GetDistance({*(std::prev(it_to)), *it_to});
+                ++span_count;
                 route_graph_.AddEdge({
                     GetStopVertexIndex((*it_from)->name_) + 1,
                     GetStopVertexIndex((*it_to)->name_),
-                    current_distance / routing_settings_.bus_velocity
+                    {
+                        current_distance / routing_settings_.bus_velocity,
+                        span_count
+                    }
                 });
                 edge_index_to_bus_.push_back(bus);
             }
             current_distance = 0.0;
+            span_count = 0;
         }
     }
 }
@@ -274,7 +286,7 @@ const Bus* TransportCatalogue::GetBusByEdgeIndex(graph::EdgeId edge_id) const {
     }
 }
 
-const graph::Edge<double>& TransportCatalogue::GetEdgeByIndex(graph::EdgeId edge_id) const {
+const graph::Edge<BusRouteWeight>& TransportCatalogue::GetEdgeByIndex(graph::EdgeId edge_id) const {
     return route_graph_.GetEdge(edge_id);
 }
 
@@ -291,6 +303,13 @@ int TransportCatalogue::ComputeRouteSpanBetweenGraphVertices(
     auto it_to = std::find(it_from, bus->stops_.end(), stop_to);
     // неверный подход
     return std::distance(it_from, it_to); // заглушка
+}
+
+const Stop* TransportCatalogue::GetStopByVertexIndex(graph::VertexId vertex_id) const {
+    if (vertex_id >= vertex_index_to_stop_.size()) {
+        throw std::logic_error("Bad vartex id is passed, too big");
+    }
+    return vertex_index_to_stop_[vertex_id];
 }
 
 } // namespace catalogue

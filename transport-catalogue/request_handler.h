@@ -30,7 +30,7 @@ public:
     
 
     // MapRenderer понадобится в следующей части итогового проекта
-    RequestHandler(const TransportCatalogue& db, renderer::MapRenderer& renderer, graph::Router<double>& router);
+    RequestHandler(const TransportCatalogue& db, renderer::MapRenderer& renderer, graph::Router<BusRouteWeight>& router);
 
     // Возвращает информацию о маршруте (запрос Bus)
     std::optional<BusStat> GetBusStat(const std::string_view& bus_name) const;
@@ -43,14 +43,14 @@ public:
     // Возвращает информацию об остановке (запрос Stop)
     std::optional<StopInfo> GetStopInfo(const std::string_view& bus_name) const;
 
-    std::optional<graph::Router<double>::RouteInfo> GetRouteInfo(std::string_view stop_from, std::string_view stop_to) const;
+    std::optional<graph::Router<BusRouteWeight>::RouteInfo> GetRouteInfo(std::string_view stop_from, std::string_view stop_to) const;
 
 
 private:
     // RequestHandler использует агрегацию объектов "Транспортный Справочник" и "Визуализатор Карты"
     const TransportCatalogue& db_;
     renderer::MapRenderer& renderer_;
-    const graph::Router<double>& router_;
+    const graph::Router<BusRouteWeight>& router_;
 };
 
 

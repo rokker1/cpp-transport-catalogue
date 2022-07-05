@@ -90,12 +90,14 @@ public:
 
     template <typename Weight>
     const graph::DirectedWeightedGraph<Weight>& GetRouteGraph() const;
+
     graph::VertexId GetStopVertexIndex(std::string_view stop_name) const;
     const Bus* GetBusByEdgeIndex(graph::EdgeId edge_id) const;
-    const graph::Edge<double>& GetEdgeByIndex(graph::EdgeId edge_id) const;
+    const graph::Edge<BusRouteWeight>& GetEdgeByIndex(graph::EdgeId edge_id) const;
     int ComputeRouteSpanBetweenGraphVertices(const Bus* bus
                                             , graph::VertexId vertex_from
                                             , graph::VertexId vertex_to) const;
+    const Stop* GetStopByVertexIndex(graph::VertexId vertex_id) const;
 private:
     //все остановки в базе данных
     std::deque<Stop> stops_; 
@@ -118,7 +120,7 @@ private:
     BusStat ComputeBusInfo(std::string_view name) const;
 
     RoutingSettings routing_settings_;
-    graph::DirectedWeightedGraph<double> route_graph_;
+    graph::DirectedWeightedGraph<BusRouteWeight> route_graph_;
     std::deque<const Stop*> vertex_index_to_stop_;
     std::deque<const Bus*> edge_index_to_bus_;
     //данный словарь хранит ид "приёмных" остановок - с четными ид.
@@ -132,6 +134,7 @@ template <typename Weight>
 const graph::DirectedWeightedGraph<Weight>& TransportCatalogue::GetRouteGraph() const {
     return route_graph_;
 }
+
 
 
 } // namespace catalogue
