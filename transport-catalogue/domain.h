@@ -45,35 +45,35 @@ struct BusRouteWeight {
     double time = 0.0;
     int span = 0;
 
-BusRouteWeight() = default;
+    BusRouteWeight() = default;
 
-bool operator<(const BusRouteWeight& other) const {
-    return time < other.time;
-}
+    bool operator<(const BusRouteWeight& other) const {
+        return time < other.time;
+    }
 
-bool operator>(const BusRouteWeight& other) const {
-    return time > other.time;
-}
+    bool operator>(const BusRouteWeight& other) const {
+        return time > other.time;
+    }
 
-bool operator<=(const BusRouteWeight& other) const {
-    return !(time > other.time);
-}
+    bool operator<=(const BusRouteWeight& other) const {
+        return !(time > other.time);
+    }
 
-bool operator>=(const BusRouteWeight& other) const {
-    return !(time < other.time);
-}
+    bool operator>=(const BusRouteWeight& other) const {
+        return !(time < other.time);
+    }
 
-bool operator==(const BusRouteWeight& other) const {
-    return time == other.time;
-}
+    bool operator==(const BusRouteWeight& other) const {
+        return time == other.time;
+    }
 
-bool operator!=(const BusRouteWeight& other) const {
-    return time != other.time;
-}
+    bool operator!=(const BusRouteWeight& other) const {
+        return time != other.time;
+    }
 
-BusRouteWeight operator+(const BusRouteWeight& other) const {
-    return {time + other.time, span + other.span};
-}
+    BusRouteWeight operator+(const BusRouteWeight& other) const {
+        return {time + other.time, span + other.span};
+    }
 
 };
 

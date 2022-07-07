@@ -17,6 +17,7 @@
 #include "domain.h"
 #include "router.h"
 
+
 namespace catalogue
 {
 
@@ -50,6 +51,8 @@ struct RouteInfo {
 
 };
 
+
+
 struct RouteDistanceHasher {
     size_t operator()(std::pair<const Stop*, const Stop*> p) const {
         std::hash<const void*> ptr_hasher{}; // объект - хешер
@@ -60,6 +63,7 @@ struct RouteDistanceHasher {
 
 class TransportCatalogue {
 public:
+
     TransportCatalogue() = default;
     TransportCatalogue(RoutingSettings routing_settings);
 
@@ -119,6 +123,8 @@ private:
     
     BusStat ComputeBusInfo(std::string_view name) const;
 
+
+    //routing
     RoutingSettings routing_settings_;
     graph::DirectedWeightedGraph<BusRouteWeight> route_graph_;
     std::deque<const Stop*> vertex_index_to_stop_;
@@ -127,7 +133,7 @@ private:
     std::map<std::string_view, graph::VertexId> stopname_to_vertex_id_;
     
 
-    
+    friend class TransportRouter;
 };  
 
 template <typename Weight>

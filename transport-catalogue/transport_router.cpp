@@ -1,0 +1,70 @@
+#include "transport_router.h"
+
+namespace catalogue {
+
+TransportRouter::TransportRouter(RoutingSettings settings,
+                                const TransportCatalogue& cat) 
+    : routing_settings_(std::move(settings))
+    , cat_(cat)
+    , route_graph_(2 * cat_.stops_.size())
+{
+}
+
+void TransportRouter::SetRoutingSettings(RoutingSettings routing_settings) {
+    routing_settings_ = std::move(routing_settings);
+}
+
+void TransportRouter::AddStopVertex(const Stop* stop) {
+    vertex_index_to_stop_.push_back(stop);
+    vertex_index_to_stop_.push_back(stop);
+    //Сохраняем только четные ид - приемные остановки, 
+    //"исхожящие" вершины можно получить прибавив единицу к ид.
+    stopname_to_vertex_id_.emplace(stop->name_, vertex_index_to_stop_.size() - 2);
+}
+
+void TransportRouter::AddBusWaitEdges() {
+    //edge_index_to_bus_.resize(std::pow(stopname_to_stop_.size(), 3));
+    //вызов конструктора графа для известного на данный момент числа вершин графа
+    //route_graph_ = std::move(graph::DirectedWeightedGraph<BusRouteWeight>(vertex_index_to_stop_.size()));
+    for(graph::VertexId vertex_from_id = 0; vertex_from_id < vertex_index_to_stop_.size(); vertex_from_id += 2) {
+        route_graph_.AddEdge({vertex_from_id, vertex_from_id + 1, routing_settings_.bus_wait_time});
+        edge_index_to_bus_.push_back(nullptr);
+    }
+}
+
+void TransportRouter::AddBusEdges(std::string_view name) {
+    if(cat_.busname_to_bus_.count(name) == 0) {
+        throw std::logic_error("No such bus");
+    }
+    const Bus* bus = cat_.busname_to_bus_.at(name);
+    const std::vector<const Stop*>& stops = bus->stops_;
+
+    if(bus->bus_type_ == BusType::CYCLED) {
+        AddBusStopsEdges(bus, stops.begin(), stops.end());
+    } else {
+        AddBusStopsEdges(bus, stops.begin(), stops.end());
+        AddBusStopsEdges(bus, stops.rbegin(), stops.rend());
+    }
+}
+
+
+graph::VertexId TransportRouter::GetStopVertexIndex(std::string_view stop_name) const {
+    if(stopname_to_vertex_id_.count(stop_name) == 0) {
+        throw std::logic_error("Invalid stop name - can't find VertexId");
+    }
+    return stopname_to_vertex_id_.at(stop_name);
+}
+
+const Bus* TransportRouter::GetBusByEdgeIndex(graph::EdgeId edge_id) const {
+    if(edge_id < edge_index_to_bus_.size()) {
+        return edge_index_to_bus_[edge_id];
+    } else {
+        throw std::logic_error("Bad EdgeId requested!");
+    }
+}
+
+const graph::Edge<BusRouteWeight>& TransportRouter::GetEdgeByIndex(graph::EdgeId edge_id) const {
+    return route_graph_.GetEdge(edge_id);
+}
+
+} // namespace catalogue

@@ -32,7 +32,7 @@ RequestHandler::RequestHandler(const TransportCatalogue& db, renderer::MapRender
 {
 }
 
-std::string RequestHandler::RenderMapToString() {
+std::string RequestHandler::RenderMap() {
     std::deque<const Bus*> buses = db_.GetBusesSorted();
     renderer_.RenderRoutes(buses);
 

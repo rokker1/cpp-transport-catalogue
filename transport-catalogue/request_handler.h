@@ -35,9 +35,7 @@ public:
     // Возвращает информацию о маршруте (запрос Bus)
     std::optional<BusStat> GetBusStat(const std::string_view& bus_name) const;
 
-    
-    // я художник я так вижу
-    std::string RenderMapToString();
+    std::string RenderMap();
 
 
     // Возвращает информацию об остановке (запрос Stop)

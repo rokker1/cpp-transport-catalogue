@@ -48,5 +48,10 @@
   "directory": "/home/xu/source/cpp-transport-catalogue/build",
   "command": "/bin/c++   -g -o CMakeFiles/Transport-catalogue.dir/transport-catalogue/json_builder.cpp.o -c /home/xu/source/cpp-transport-catalogue/transport-catalogue/json_builder.cpp",
   "file": "/home/xu/source/cpp-transport-catalogue/transport-catalogue/json_builder.cpp"
+},
+{
+  "directory": "/home/xu/source/cpp-transport-catalogue/build",
+  "command": "/bin/c++   -g -o CMakeFiles/Transport-catalogue.dir/transport-catalogue/transport_router.cpp.o -c /home/xu/source/cpp-transport-catalogue/transport-catalogue/transport_router.cpp",
+  "file": "/home/xu/source/cpp-transport-catalogue/transport-catalogue/transport_router.cpp"
 }
 ]

@@ -369,6 +369,30 @@ transport-catalogue/transport_catalogue.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Transport-catalogue.dir/build.make CMakeFiles/Transport-catalogue.dir/transport-catalogue/transport_catalogue.cpp.s
 .PHONY : transport-catalogue/transport_catalogue.cpp.s
 
+transport-catalogue/transport_router.o: transport-catalogue/transport_router.cpp.o
+.PHONY : transport-catalogue/transport_router.o
+
+# target to build an object file
+transport-catalogue/transport_router.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Transport-catalogue.dir/build.make CMakeFiles/Transport-catalogue.dir/transport-catalogue/transport_router.cpp.o
+.PHONY : transport-catalogue/transport_router.cpp.o
+
+transport-catalogue/transport_router.i: transport-catalogue/transport_router.cpp.i
+.PHONY : transport-catalogue/transport_router.i
+
+# target to preprocess a source file
+transport-catalogue/transport_router.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Transport-catalogue.dir/build.make CMakeFiles/Transport-catalogue.dir/transport-catalogue/transport_router.cpp.i
+.PHONY : transport-catalogue/transport_router.cpp.i
+
+transport-catalogue/transport_router.s: transport-catalogue/transport_router.cpp.s
+.PHONY : transport-catalogue/transport_router.s
+
+# target to generate assembly for a file
+transport-catalogue/transport_router.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Transport-catalogue.dir/build.make CMakeFiles/Transport-catalogue.dir/transport-catalogue/transport_router.cpp.s
+.PHONY : transport-catalogue/transport_router.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -408,6 +432,9 @@ help:
 	@echo "... transport-catalogue/transport_catalogue.o"
 	@echo "... transport-catalogue/transport_catalogue.i"
 	@echo "... transport-catalogue/transport_catalogue.s"
+	@echo "... transport-catalogue/transport_router.o"
+	@echo "... transport-catalogue/transport_router.i"
+	@echo "... transport-catalogue/transport_router.s"
 .PHONY : help
 
 

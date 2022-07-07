@@ -199,7 +199,7 @@ void JsonReader::ProcessStopInfoRequest(RequestHandler& handler, const json::Nod
 
 void JsonReader::ProcessMapRequest(RequestHandler& handler, const json::Node& stat_request, json::Array& answers_array) {
     int id = stat_request.AsDict().at("id").AsInt();
-    std::string map_as_string = std::move(handler.RenderMapToString());
+    std::string map_as_string = std::move(handler.RenderMap());
     answers_array.push_back(std::move(ConvertMapToJsonDict(id, map_as_string)));
 }
 

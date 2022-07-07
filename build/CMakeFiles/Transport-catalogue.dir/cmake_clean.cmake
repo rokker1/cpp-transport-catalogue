@@ -19,6 +19,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/Transport-catalogue.dir/transport-catalogue/svg.cpp.o.d"
   "CMakeFiles/Transport-catalogue.dir/transport-catalogue/transport_catalogue.cpp.o"
   "CMakeFiles/Transport-catalogue.dir/transport-catalogue/transport_catalogue.cpp.o.d"
+  "CMakeFiles/Transport-catalogue.dir/transport-catalogue/transport_router.cpp.o"
+  "CMakeFiles/Transport-catalogue.dir/transport-catalogue/transport_router.cpp.o.d"
   "Transport-catalogue"
   "Transport-catalogue.pdb"
 )

@@ -14,4 +14,6 @@ add_executable(Transport-catalogue
     transport-catalogue/svg.cpp
     transport-catalogue/json.cpp
     transport-catalogue/geo.cpp
-    transport-catalogue/json_builder.cpp)
+    transport-catalogue/json_builder.cpp
+    transport-catalogue/transport_router.cpp
+    )
