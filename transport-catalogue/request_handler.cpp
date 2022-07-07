@@ -1,13 +1,5 @@
 #include "request_handler.h"
 
-/*
- * Здесь можно было бы разместить код обработчика запросов к базе, содержащего логику, которую не
- * хотелось бы помещать ни в transport_catalogue, ни в json reader.
- *
- * Если вы затрудняетесь выбрать, что можно было бы поместить в этот файл,
- * можете оставить его пустым.
- */
-
 std::optional<BusStat> RequestHandler::GetBusStat(const std::string_view& bus_name) const {
     BusStat stat = db_.GetBusInfo(bus_name);
     if(!stat.IsExsists) {
@@ -26,9 +18,8 @@ std::optional<StopInfo> RequestHandler::GetStopInfo(const std::string_view& stop
     }
 }
 
-
-RequestHandler::RequestHandler(const TransportCatalogue& db, renderer::MapRenderer& renderer, graph::Router<BusRouteWeight>& router)
-    : db_(db), renderer_(renderer), router_(router) 
+RequestHandler::RequestHandler(const TransportCatalogue& db, renderer::MapRenderer& renderer, graph::Router<BusRouteWeight>& router, catalogue::TransportRouter& t_router)
+    : db_(db), renderer_(renderer), router_(router), t_router_(t_router)
 {
 }
 
@@ -49,8 +40,22 @@ std::string RequestHandler::RenderMap() {
 std::optional<graph::Router<BusRouteWeight>::RouteInfo> RequestHandler::GetRouteInfo(std::string_view stop_from, std::string_view stop_to) const {
     // информация о маршруте в представлении graph::router
     std::optional<graph::Router<BusRouteWeight>::RouteInfo> route_info = router_.BuildRoute(
-        db_.GetStopVertexIndex(stop_from),
-        db_.GetStopVertexIndex(stop_to)
+        t_router_.GetStopVertexIndex(stop_from),
+        t_router_.GetStopVertexIndex(stop_to)
     );
     return route_info;
+}
+
+
+// эти методы переделать на транспорт рутер
+const graph::Edge<BusRouteWeight>& RequestHandler::GetEdgeByIndex(graph::EdgeId edge_id) const {
+    return t_router_.GetEdgeByIndex(edge_id);
+}
+
+const Bus* RequestHandler::GetBusByEdgeIndex(graph::EdgeId edge_id) const {
+    return t_router_.GetBusByEdgeIndex(edge_id);
+}
+
+const Stop* RequestHandler::GetStopByVertexIndex(graph::VertexId vertex_id) const {
+    return t_router_.GetStopByVertexIndex(vertex_id);
 }

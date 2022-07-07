@@ -1,5 +1,6 @@
 #pragma once
 #include "transport_catalogue.h"
+#include "transport_router.h"
 #include "map_renderer.h"
 #include "svg.h"
 
@@ -30,7 +31,11 @@ public:
     
 
     // MapRenderer понадобится в следующей части итогового проекта
-    RequestHandler(const TransportCatalogue& db, renderer::MapRenderer& renderer, graph::Router<BusRouteWeight>& router);
+    RequestHandler(const TransportCatalogue& db, 
+    renderer::MapRenderer& renderer, 
+    graph::Router<BusRouteWeight>& router,
+    catalogue::TransportRouter& t_router);
+
 
     // Возвращает информацию о маршруте (запрос Bus)
     std::optional<BusStat> GetBusStat(const std::string_view& bus_name) const;
@@ -44,11 +49,17 @@ public:
     std::optional<graph::Router<BusRouteWeight>::RouteInfo> GetRouteInfo(std::string_view stop_from, std::string_view stop_to) const;
 
 
+    const graph::Edge<BusRouteWeight>& GetEdgeByIndex(graph::EdgeId edge_id) const;
+    const Bus* GetBusByEdgeIndex(graph::EdgeId edge_id) const;
+    const Stop* GetStopByVertexIndex(graph::VertexId vertex_id) const;
+
 private:
     // RequestHandler использует агрегацию объектов "Транспортный Справочник" и "Визуализатор Карты"
     const TransportCatalogue& db_;
     renderer::MapRenderer& renderer_;
+
     const graph::Router<BusRouteWeight>& router_;
+    const catalogue::TransportRouter& t_router_;
 };
 
 

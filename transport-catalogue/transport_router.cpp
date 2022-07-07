@@ -5,10 +5,10 @@ namespace catalogue {
 TransportRouter::TransportRouter(RoutingSettings settings,
                                 const TransportCatalogue& cat) 
     : routing_settings_(std::move(settings))
-    , cat_(cat)
-    , route_graph_(2 * cat_.stops_.size())
-{
-}
+    , cat_(cat) {
+
+    }
+    
 
 void TransportRouter::SetRoutingSettings(RoutingSettings routing_settings) {
     routing_settings_ = std::move(routing_settings);
@@ -25,7 +25,7 @@ void TransportRouter::AddStopVertex(const Stop* stop) {
 void TransportRouter::AddBusWaitEdges() {
     //edge_index_to_bus_.resize(std::pow(stopname_to_stop_.size(), 3));
     //вызов конструктора графа для известного на данный момент числа вершин графа
-    //route_graph_ = std::move(graph::DirectedWeightedGraph<BusRouteWeight>(vertex_index_to_stop_.size()));
+    route_graph_ = std::move(graph::DirectedWeightedGraph<BusRouteWeight>(vertex_index_to_stop_.size()));
     for(graph::VertexId vertex_from_id = 0; vertex_from_id < vertex_index_to_stop_.size(); vertex_from_id += 2) {
         route_graph_.AddEdge({vertex_from_id, vertex_from_id + 1, routing_settings_.bus_wait_time});
         edge_index_to_bus_.push_back(nullptr);
@@ -47,7 +47,6 @@ void TransportRouter::AddBusEdges(std::string_view name) {
     }
 }
 
-
 graph::VertexId TransportRouter::GetStopVertexIndex(std::string_view stop_name) const {
     if(stopname_to_vertex_id_.count(stop_name) == 0) {
         throw std::logic_error("Invalid stop name - can't find VertexId");
@@ -65,6 +64,13 @@ const Bus* TransportRouter::GetBusByEdgeIndex(graph::EdgeId edge_id) const {
 
 const graph::Edge<BusRouteWeight>& TransportRouter::GetEdgeByIndex(graph::EdgeId edge_id) const {
     return route_graph_.GetEdge(edge_id);
+}
+
+const Stop* TransportRouter::GetStopByVertexIndex(graph::VertexId vertex_id) const {
+    if (vertex_id >= vertex_index_to_stop_.size()) {
+        throw std::logic_error("Bad vartex id is passed, too big");
+    }
+    return vertex_index_to_stop_[vertex_id];
 }
 
 } // namespace catalogue

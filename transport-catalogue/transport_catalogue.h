@@ -25,10 +25,7 @@ using geo::Coordinates;
 using geo::ComputeDistance;
 
 
-struct RoutingSettings {
-    double bus_wait_time = 0;
-    double bus_velocity = 0;
-};
+
 
 struct BusStat {
     unsigned int stops_count = 0;
@@ -65,7 +62,7 @@ class TransportCatalogue {
 public:
 
     TransportCatalogue() = default;
-    TransportCatalogue(RoutingSettings routing_settings);
+    // TransportCatalogue(RoutingSettings routing_settings);
 
     void AddBus(std::string_view name, const std::vector<std::string>& stops, BusType type);
 
@@ -87,21 +84,6 @@ public:
     const std::unordered_map<const Stop*, std::set<const Bus*>>& GetStopsToBuses() const;
     const std::map<std::string_view, const Stop*>& GetStopnameToStops() const;
     
-    void SetRoutingSettings(RoutingSettings routing_settings);
-    void AddStopVertex(const Stop*);
-    void AddBusWaitEdges();
-    void AddBusEdges(std::string_view name);
-
-    template <typename Weight>
-    const graph::DirectedWeightedGraph<Weight>& GetRouteGraph() const;
-
-    graph::VertexId GetStopVertexIndex(std::string_view stop_name) const;
-    const Bus* GetBusByEdgeIndex(graph::EdgeId edge_id) const;
-    const graph::Edge<BusRouteWeight>& GetEdgeByIndex(graph::EdgeId edge_id) const;
-    int ComputeRouteSpanBetweenGraphVertices(const Bus* bus
-                                            , graph::VertexId vertex_from
-                                            , graph::VertexId vertex_to) const;
-    const Stop* GetStopByVertexIndex(graph::VertexId vertex_id) const;
 private:
     //все остановки в базе данных
     std::deque<Stop> stops_; 
@@ -123,25 +105,7 @@ private:
     
     BusStat ComputeBusInfo(std::string_view name) const;
 
-
-    //routing
-    RoutingSettings routing_settings_;
-    graph::DirectedWeightedGraph<BusRouteWeight> route_graph_;
-    std::deque<const Stop*> vertex_index_to_stop_;
-    std::deque<const Bus*> edge_index_to_bus_;
-    //данный словарь хранит ид "приёмных" остановок - с четными ид.
-    std::map<std::string_view, graph::VertexId> stopname_to_vertex_id_;
-    
-
     friend class TransportRouter;
 };  
-
-template <typename Weight>
-const graph::DirectedWeightedGraph<Weight>& TransportCatalogue::GetRouteGraph() const {
-    return route_graph_;
-}
-
-
-
 } // namespace catalogue
 

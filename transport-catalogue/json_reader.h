@@ -17,6 +17,7 @@
 #include "map_renderer.h"
 #include "json_builder.h"
 #include "request_handler.h"
+#include "transport_router.h"
 
 
 namespace json_reader {
@@ -42,12 +43,11 @@ struct StatRequest{
 
 class JsonReader {
 public:
-    JsonReader(json::Document document, catalogue::TransportCatalogue& catalogue);
+    JsonReader(json::Document document);
 
     void ReadBaseRequests(json::Document document);
-    void ProcessBaseRequests(json::Document document, catalogue::TransportCatalogue& catalogue);
     json::Document ProcessStatRequests(RequestHandler& handler);
-    void FillCatalogueFromReader(catalogue::TransportCatalogue& catalogue);
+    void Fill(catalogue::TransportCatalogue& catalogue, catalogue::TransportRouter& router);
 
     // ---- rendering ----
     renderer::RenderSettings ReadRenderSettingsFromJSON(const json::Document& document) const;
@@ -69,14 +69,14 @@ private:
     json::Node ConvertStopInfoToJsonDict(int id, std::optional<StopInfo> bus_stat);
     json::Node ConvertMapToJsonDict(int id, std::string map_as_string);
     json::Node ConvertRouteInfoToJsonDict(int id, 
-                std::optional<graph::Router<BusRouteWeight>::RouteInfo> route_info);
+            std::optional<graph::Router<BusRouteWeight>::RouteInfo> route_info,
+            RequestHandler& handler);
 
     void ProcessBusStatRequest(RequestHandler& handler, const json::Node& stat_request, json::Array& answers_array);
     void ProcessStopInfoRequest(RequestHandler& handler, const json::Node& stat_request, json::Array& answers_array);
     void ProcessMapRequest(RequestHandler& handler, const json::Node& stat_request, json::Array& answers_array);
     void ProcessRouteRequest(RequestHandler& handler, const json::Node& stat_request, json::Array& answers_array);
     json::Document document_;
-    catalogue::TransportCatalogue& catalogue_;
 };
 
 } // namespace json_reader

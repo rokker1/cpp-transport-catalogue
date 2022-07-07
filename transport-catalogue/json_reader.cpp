@@ -8,14 +8,6 @@
 using namespace std::literals;
 
 namespace json_reader {
-void JsonReader::ProcessBaseRequests(json::Document document, catalogue::TransportCatalogue& catalogue) {
-    assert(document.GetRoot().IsDict());
-    assert(document.GetRoot().AsDict().count("base_requests"));
-    SetRoutingSettings(ReadRoutingSettings(document), catalogue);
-    ReadBaseRequests(document);
-    FillCatalogueFromReader(catalogue);
-    
-}
 
 void JsonReader::ReadBaseRequests(json::Document document) {
     json::Array base_requests = document.GetRoot().AsDict().at("base_requests").AsArray();
@@ -54,35 +46,6 @@ void JsonReader::AddBusBaseRequest(const json::Node& request) {
         add_bus_request.stops.push_back(std::move(stop.AsString()));
     }
     add_bus_requests_.push_back(std::move(add_bus_request));
-}
-
-void JsonReader::FillCatalogueFromReader(catalogue::TransportCatalogue& catalogue) {
-    for(const auto& [name, coordinates, _] : add_stop_requests_) {
-        catalogue.AddStop(name, coordinates);
-    }
-    for(const auto& [name_from, _, distances] : add_stop_requests_) {
-        const Stop* stop_from = catalogue.FindStop(name_from);
-        for(const auto& [name_to, distance] : distances) {
-            const Stop* stop_to = catalogue.FindStop(name_to);
-            catalogue.SetDistance({stop_from, stop_to}, distance);
-        }
-
-        catalogue.AddStopVertex(stop_from);
-        
-    }
-
-    catalogue.AddBusWaitEdges();
-
-    for(const auto& [name, stops, type] : add_bus_requests_) {
-        BusType bus_type;
-        if(type) {
-            bus_type = BusType::CYCLED;
-        } else {
-            bus_type = BusType::ORDINARY;
-        }
-        catalogue.AddBus(name, stops, bus_type);
-        catalogue.AddBusEdges(name);
-    }
 }
 
 renderer::RenderSettings JsonReader::ReadRenderSettingsFromJSON(const json::Document& document) const {
@@ -143,10 +106,12 @@ svg::Color JsonReader::ReadColor(const json::Node& node) const {
     }
     return color;
 }
-JsonReader::JsonReader(json::Document document, catalogue::TransportCatalogue& catalogue) 
-    : document_(document), catalogue_(catalogue)
+
+JsonReader::JsonReader(json::Document document) 
+    : document_(document)
 {
-    ProcessBaseRequests(document_, catalogue_); 
+    //ProcessBaseRequests(document_, catalogue_); 
+    ReadBaseRequests(document);
 }
 
 renderer::RenderSettings JsonReader::GetRenderSettings() const {
@@ -228,6 +193,7 @@ json::Node JsonReader::ConvertBusStatToJsonDict(int id, std::optional<BusStat> b
         return answer;
     }
 }
+
 json::Node JsonReader::ConvertStopInfoToJsonDict(int id, std::optional<StopInfo> stop_info) {
     if(stop_info.has_value()) {
         // остановка существует
@@ -254,6 +220,7 @@ json::Node JsonReader::ConvertStopInfoToJsonDict(int id, std::optional<StopInfo>
         return answer;
     }
 }
+
 json::Node JsonReader::ConvertMapToJsonDict(int id, std::string map_as_string) {
     json::Node answer{
             json::Builder{}.StartDict()
@@ -274,20 +241,17 @@ catalogue::RoutingSettings JsonReader::ReadRoutingSettings(const json::Document&
     return settings;
 }
 
-void JsonReader::SetRoutingSettings(catalogue::RoutingSettings settings, catalogue::TransportCatalogue& catalogue) const {
-    catalogue.SetRoutingSettings(std::move(settings));
-}
-
 void JsonReader::ProcessRouteRequest(RequestHandler& handler, const json::Node& stat_request, json::Array& answers_array) {
     int id = stat_request.AsDict().at("id").AsInt();
     std::string stop_from = stat_request.AsDict().at("from").AsString();
     std::string stop_to = stat_request.AsDict().at("to").AsString();
     std::optional<graph::Router<BusRouteWeight>::RouteInfo> route_info = handler.GetRouteInfo(stop_from, stop_to);
-    answers_array.push_back(std::move(ConvertRouteInfoToJsonDict(id, route_info)));
+    answers_array.push_back(std::move(ConvertRouteInfoToJsonDict(id, route_info, handler)));
 }
 
 json::Node JsonReader::ConvertRouteInfoToJsonDict(int id, 
-            std::optional<graph::Router<BusRouteWeight>::RouteInfo> route_info) {
+            std::optional<graph::Router<BusRouteWeight>::RouteInfo> route_info,
+            RequestHandler& handler) {
     
     // ответ в любом случае содержит ид запроса
     json::Node answer = json::Builder{}
@@ -309,16 +273,16 @@ json::Node JsonReader::ConvertRouteInfoToJsonDict(int id,
             json::Dict item{};
 
             // временно запомнить ссылку на ребро
-            const graph::Edge<BusRouteWeight>& edge = catalogue_.GetEdgeByIndex(edge_id);
+            const graph::Edge<BusRouteWeight>& edge = handler.GetEdgeByIndex(edge_id);
             //время данного участка пути
             double time = edge.weight.time;
             item.emplace("time", time);
 
-            if(catalogue_.GetBusByEdgeIndex(edge_id)) {
+            if(auto bus = handler.GetBusByEdgeIndex(edge_id)) {
                 // это ребро графа соответствует поездке на автобусе
                 item.emplace("type", "Bus");
 
-                std::string bus_name = catalogue_.GetBusByEdgeIndex(edge_id)->name_;
+                std::string bus_name = bus->name_;
                 item.emplace("bus", bus_name);
 
                 item.emplace("span_count", edge.weight.span);
@@ -328,7 +292,7 @@ json::Node JsonReader::ConvertRouteInfoToJsonDict(int id,
                 item.emplace("type", "Wait");
                 item.emplace(
                     "stop_name", 
-                    catalogue_.GetStopByVertexIndex(edge.from)->name_
+                    handler.GetStopByVertexIndex(edge.from)->name_
                 );
             }
             items.push_back(std::move(item));
@@ -339,5 +303,38 @@ json::Node JsonReader::ConvertRouteInfoToJsonDict(int id,
         answer.AsDict().emplace("error_message", "not found");
     }
     return answer;
+}
+
+// одновременное заполнение каталога и рутера необходимо для миимизации числа циклов
+// в одном цикле по остановкам заполняются остановки справочника +
+// + добавляем вершины графа
+void JsonReader::Fill(catalogue::TransportCatalogue& catalogue, catalogue::TransportRouter& router) {
+    for(const auto& [name, coordinates, _] : add_stop_requests_) {
+        catalogue.AddStop(name, coordinates);
+    }
+    for(const auto& [name_from, _, distances] : add_stop_requests_) {
+        const Stop* stop_from = catalogue.FindStop(name_from);
+        for(const auto& [name_to, distance] : distances) {
+            const Stop* stop_to = catalogue.FindStop(name_to);
+            catalogue.SetDistance({stop_from, stop_to}, distance);
+        }
+        // заполнение двух объектов минимизирует число циклов
+        router.AddStopVertex(stop_from);
+    }
+
+    router.AddBusWaitEdges();
+
+    // в одном цикле по запросам на добавление автобуса добавляем автобусы и 
+    // ребра графа
+    for(const auto& [name, stops, type] : add_bus_requests_) {
+        BusType bus_type;
+        if(type) {
+            bus_type = BusType::CYCLED;
+        } else {
+            bus_type = BusType::ORDINARY;
+        }
+        catalogue.AddBus(name, stops, bus_type);
+        router.AddBusEdges(name);
+    }  
 }
 }

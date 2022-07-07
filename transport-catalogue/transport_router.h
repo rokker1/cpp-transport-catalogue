@@ -4,7 +4,10 @@
 #include <map>
 
 namespace catalogue {
-
+struct RoutingSettings {
+    double bus_wait_time = 0;
+    double bus_velocity = 0;
+};
 
 class TransportRouter {
 private:
@@ -39,7 +42,7 @@ public:
     graph::VertexId GetStopVertexIndex(std::string_view stop_name) const;
     const Bus* GetBusByEdgeIndex(graph::EdgeId edge_id) const;
     const graph::Edge<BusRouteWeight>& GetEdgeByIndex(graph::EdgeId edge_id) const;
-
+    const Stop* GetStopByVertexIndex(graph::VertexId vertex_id) const;
 
 };
 
