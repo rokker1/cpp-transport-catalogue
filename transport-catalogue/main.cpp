@@ -15,7 +15,7 @@ int main() {
         reader.ReadRoutingSettings(doc), 
         cat);
 
-      // заполнение справочниа и роутера
+      // заполнение справочника и роутера
       reader.Fill(cat, transport_router);
 
       graph::Router<BusRouteWeight> router(transport_router.GetRouteGraph<BusRouteWeight>());

@@ -52,7 +52,6 @@ StopInfo TransportCatalogue::GetStopInfo(std::string_view stop_name) const {
             //остановка есть и через нее едут автобусы
             StopInfo stop_info{{}, true};
 
-            // после ревью появился лишний цикл здесь
             std::for_each(stops_to_buses_.at(stop_ptr).begin(),
                             stops_to_buses_.at(stop_ptr).end(),
                             [&](auto bus){
@@ -94,7 +93,6 @@ BusStat TransportCatalogue::ComputeBusInfo(std::string_view name) const {
     double curvature = 0.0;
     if(bus = FindBus(name), bus) {
         // такой автобус существует
-        //bus = FindBus(name);
         stops_count = bus->stops_.size();
 
         std::unordered_set<std::string_view, std::hash<std::string_view>, std::equal_to<std::string_view>> unique_stops;

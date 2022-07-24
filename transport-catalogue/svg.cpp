@@ -81,12 +81,6 @@ Circle& Circle::SetRadius(double radius)  {
     return *this;
 }
 
-// void Circle::RenderAttrs(const RenderContext& context) const{
-//     auto& out= context.out;
-//     out << "test";
-
-// }
-
 void Circle::RenderObject(const RenderContext& context) const {
     auto& out = context.out;
     out << "<circle cx=\""sv << center_.x << "\" cy=\""sv << center_.y << "\" "sv;
@@ -221,10 +215,6 @@ void Document::Render(std::ostream& out) const {
     }
     out << "</svg>"sv;
 }
-
-// ---------- ObjectContainer ------------
-
-
 
 
 // ----------OstreamColorPtinter-------------

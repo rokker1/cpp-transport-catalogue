@@ -15,11 +15,7 @@
 #include <memory>
 #include <map>
 #include <set>
-/*
- * В этом файле вы можете разместить код, отвечающий за визуализацию карты маршрутов в формате SVG.
- * Визуализация маршрутов вам понадобится во второй части итогового проекта.
- * Пока можете оставить файл пустым.
- */
+
 namespace renderer {
 
 struct RenderSettings {
@@ -68,8 +64,6 @@ public:
     explicit MapRenderer(RenderSettings&& render_settings, std::deque<const Bus*> routes)
         : render_settings_(render_settings) {
         
-        // перебор всех остановок всех маршрутов - нужен ли? Или можем пройтись по всем остановкам справочника
-        // а если есть остановки, которые не включены ни в один маршрут?
         std::unordered_set<geo::Coordinates, CoordinatesHasher> points;
         for(const Bus* route : routes) {
             for(const Stop* stop : route->stops_) {
