@@ -53,5 +53,6 @@
         "map": "cpp",
         "optional": "cpp",
         "variant": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "${workspaceFolder}/transport-catalogue"
 }

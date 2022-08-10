@@ -4,8 +4,12 @@
 #include "map_renderer.h"
 #include "transport_router.h"
 
+#include <transport_catalogue.pb.h>
+
 int main() {
     {
+      
+      
       json::Document doc = json::Load(std::cin);
 
       catalogue::TransportCatalogue cat;

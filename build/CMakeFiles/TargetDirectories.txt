@@ -1,3 +1,0 @@
-/home/xu/source/cpp-transport-catalogue/build/CMakeFiles/Transport-catalogue.dir
-/home/xu/source/cpp-transport-catalogue/build/CMakeFiles/edit_cache.dir
-/home/xu/source/cpp-transport-catalogue/build/CMakeFiles/rebuild_cache.dir
