@@ -83,6 +83,11 @@ public:
     std::deque<const Bus*> GetBusesSorted() const;
     const std::unordered_map<const Stop*, std::set<const Bus*>>& GetStopsToBuses() const;
     const std::map<std::string_view, const Stop*>& GetStopnameToStops() const;
+
+    // ------- for serialization purposes
+    const std::deque<Stop>& GetStops() const;
+    const std::deque<Bus>& GetBuses() const;
+    const std::unordered_map<std::pair<const Stop*, const Stop*>, uint64_t, RouteDistanceHasher>& GetIntervalsToDistance() const;
     
 private:
     //все остановки в базе данных
@@ -106,11 +111,14 @@ private:
     BusStat ComputeBusInfo(std::string_view name) const;
 
     friend class TransportRouter;
+    friend class Serializer;
 
     // переменные счетчики для индексации
     // существуют в пределах экземпляра
-    int stop_count = 0;
-    int bus_count = 0;
+    int stop_count_ = 0;
+    int bus_count_ = 0;
+
+    // добавить словарь id -> pointer ?
 };  
 } // namespace catalogue
 

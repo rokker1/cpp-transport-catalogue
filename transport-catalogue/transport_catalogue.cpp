@@ -3,7 +3,7 @@
 namespace catalogue {
 void TransportCatalogue::AddBus(std::string_view name, const std::vector<std::string>& stops, BusType type) {
     std::vector<const Stop*> stops_ptr;
-    auto it = buses_.insert(buses_.end(), std::move(Bus{std::string(name), stops_ptr, type, bus_count++}));
+    auto it = buses_.insert(buses_.end(), std::move(Bus{std::string(name), stops_ptr, type, bus_count_++}));
     
     for_each(stops.begin(), stops.end(), [&stops_ptr, &it, this](std::string_view stop_name){
         if(const Stop* stop_ptr = FindStop(stop_name)) { // если есть такая остановка в базе
@@ -17,7 +17,7 @@ void TransportCatalogue::AddBus(std::string_view name, const std::vector<std::st
 }
 
 void TransportCatalogue::AddStop(std::string_view name, Coordinates coordinates) {
-    auto it = stops_.emplace(stops_.end(), std::move(Stop{std::string(name), coordinates, stop_count++}));
+    auto it = stops_.emplace(stops_.end(), std::move(Stop{std::string(name), coordinates, stop_count_++}));
     stopname_to_stop_[std::string_view{it->name_}] = &(*it);
 }
 
@@ -173,6 +173,19 @@ const std::unordered_map<const Stop*, std::set<const Bus*>>& TransportCatalogue:
 
 const std::map<std::string_view, const Stop*>& TransportCatalogue::GetStopnameToStops() const {
     return stopname_to_stop_;
+}
+
+const std::deque<Stop>& TransportCatalogue::GetStops() const {
+    return stops_;
+}
+
+const std::deque<Bus>& TransportCatalogue::GetBuses() const {
+    return buses_;
+}
+
+const std::unordered_map<std::pair<const Stop*, const Stop*>, uint64_t, RouteDistanceHasher>& 
+TransportCatalogue::GetIntervalsToDistance() const {
+    return intervals_to_distance_;
 }
 } // namespace catalogue
 

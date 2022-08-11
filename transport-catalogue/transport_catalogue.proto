@@ -8,8 +8,8 @@ enum BusType {
 }
 
 message Coordinates {
-    double x = 1;
-    double y = 2;
+    double lat = 1;
+    double lng = 2;
 }
 
 message Stop {
@@ -22,7 +22,7 @@ message Bus {
     int32 id = 1;
     string name = 2;
     repeated int32 stops = 3;
-    BusType bus_type = 4;    
+    bool bus_type_cycled = 4;    
 }
 
 message StopToBuses {
