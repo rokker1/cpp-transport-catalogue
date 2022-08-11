@@ -57,7 +57,7 @@ int main() {
       renderer::MapRenderer renderer(reader.GetRenderSettings(), cat.GetBusesSorted());
 
       RequestHandler handler(cat, renderer, router, transport_router);
-
+      // ------------------------------------------ stage 2
       json::Document result = reader.ProcessStatRequests(handler);
       json::Print(result, std::cout);
      
