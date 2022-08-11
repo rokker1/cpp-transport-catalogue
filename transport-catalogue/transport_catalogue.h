@@ -106,6 +106,11 @@ private:
     BusStat ComputeBusInfo(std::string_view name) const;
 
     friend class TransportRouter;
+
+    // переменные счетчики для индексации
+    // существуют в пределах экземпляра
+    int stop_count = 0;
+    int bus_count = 0;
 };  
 } // namespace catalogue
 

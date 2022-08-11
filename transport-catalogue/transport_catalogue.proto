@@ -2,9 +2,43 @@ syntax = "proto3";
 
 package tc_pb;
 
-message Person {
-    string name = 1;
-    int32 age = 2;
-    string address = 3;
-    repeated string phone_number = 4;
+enum BusType {
+    ORDINARY = 0;
+    CYCLED = 1;
+}
+
+message Coordinates {
+    double x = 1;
+    double y = 2;
+}
+
+message Stop {
+    int32 id = 1;
+    string name = 2;
+    Coordinates coordinates = 3;
 } 
+
+message Bus {
+    int32 id = 1;
+    string name = 2;
+    repeated int32 stops = 3;
+    BusType bus_type = 4;    
+}
+
+message StopToBuses {
+    int32 stop_id = 1;
+    repeated int32 bus_id = 2;
+}
+
+message IntervalToDistance {
+    int32 from_id = 1;
+    int32 to_id = 2;
+    int64 distance = 3;
+}
+
+message transport_catalogue {
+    repeated Stop stops = 1;
+    repeated Bus buses = 2;
+    repeated StopToBuses stops_to_buses = 3;
+    repeated IntervalToDistance intervals_to_distance = 4;
+}

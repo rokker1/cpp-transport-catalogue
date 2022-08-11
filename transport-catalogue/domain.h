@@ -19,6 +19,7 @@ using geo::ComputeDistance;
 struct Stop {
     std::string name_;
     Coordinates cordinates_;
+    int id = 0;
 };
 
 enum class BusType {
@@ -31,6 +32,7 @@ struct Bus {
     std::string name_;
     std::vector<const Stop*> stops_;
     BusType bus_type_;
+    int id = 0;
 };
 
 struct CoordinatesHasher {
