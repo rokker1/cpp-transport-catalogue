@@ -9,6 +9,9 @@ TransportRouter::TransportRouter(RoutingSettings settings,
 
     }
     
+const RoutingSettings& TransportRouter::GetRoutingSettings() const {
+    return routing_settings_;
+}
 
 void TransportRouter::SetRoutingSettings(RoutingSettings routing_settings) {
     routing_settings_ = std::move(routing_settings);

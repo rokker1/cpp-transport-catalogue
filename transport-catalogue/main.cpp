@@ -40,26 +40,33 @@ int main() {
     {
       
       
-      json::Document doc = json::Load(std::cin);
+        json::Document doc = json::Load(std::cin);
 
-      catalogue::TransportCatalogue cat;
-      json_reader::JsonReader reader(doc);
+        catalogue::TransportCatalogue cat;
+        json_reader::JsonReader reader(doc);
 
-      catalogue::TransportRouter transport_router(
-        reader.ReadRoutingSettings(doc), 
-        cat);
+        catalogue::TransportRouter transport_router(
+            reader.ReadRoutingSettings(doc), 
+            cat);
 
-      // заполнение справочника и роутера
-      reader.Fill(cat, transport_router);
+        // заполнение справочника и роутера
+        reader.Fill(cat, transport_router);
 
-      graph::Router<BusRouteWeight> router(transport_router.GetRouteGraph<BusRouteWeight>());
+        graph::Router<BusRouteWeight> router(transport_router.GetRouteGraph<BusRouteWeight>());
 
-      renderer::MapRenderer renderer(reader.GetRenderSettings(), cat.GetBusesSorted());
+        renderer::MapRenderer renderer(reader.GetRenderSettings(), cat.GetBusesSorted());
 
-      RequestHandler handler(cat, renderer, router, transport_router);
-      // ------------------------------------------ stage 2
-      json::Document result = reader.ProcessStatRequests(handler);
-      json::Print(result, std::cout);
+        // ---- serialization moment! ++++
+        Serializer serializer_2000(
+            cat,
+            transport_router.GetRoutingSettings(),
+            renderer.GetRenderSettings()
+        );
+
+        RequestHandler handler(cat, renderer, router, transport_router);
+        // ------------------------------------------ stage 2
+        json::Document result = reader.ProcessStatRequests(handler);
+        json::Print(result, std::cout);
      
     }
     return 0;

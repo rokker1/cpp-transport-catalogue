@@ -188,6 +188,9 @@ void MapRenderer::RenderStopLabel(const Stop* stop) {
         );
     }
 
+const RenderSettings& MapRenderer::GetRenderSettings() const {
+    return render_settings_;
+}
 
 }
 

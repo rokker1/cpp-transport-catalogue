@@ -99,7 +99,8 @@ public:
     void RenderStopLabelUnderlayer(std::string_view stop_name_, svg::Point point);
     void RenderStopLabelToplayer(std::string_view stop_name_, svg::Point point);
 
-    
+    // ---- for serialization purposes
+    const RenderSettings& GetRenderSettings() const;
 private:
     const RenderSettings render_settings_;
     std::unique_ptr<SphereProjector> sphere_proector_ = nullptr;

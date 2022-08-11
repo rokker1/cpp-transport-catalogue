@@ -44,6 +44,9 @@ public:
     const graph::Edge<BusRouteWeight>& GetEdgeByIndex(graph::EdgeId edge_id) const;
     const Stop* GetStopByVertexIndex(graph::VertexId vertex_id) const;
 
+
+    //------------ for serialization purposes
+    const RoutingSettings& GetRoutingSettings() const;
 };
 
 template <typename Weight>
