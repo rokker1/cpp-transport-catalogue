@@ -182,7 +182,7 @@ json::Node JsonReader::ConvertBusStatToJsonDict(int id, std::optional<BusStat> b
                 .Key("curvature").Value(stat.curvative)
                 .Key("unique_stop_count").Value(static_cast<int>(stat.unique_stops_count))
                 .Key("stop_count").Value(static_cast<int>(stat.stops_count))
-                .Key("route_length").Value(static_cast<int>(stat.length))
+                .Key("route_length").Value(static_cast<double>(stat.length))
                 .EndDict().Build();
        
         return answer;

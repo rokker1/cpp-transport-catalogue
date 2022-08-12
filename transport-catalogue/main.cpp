@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
         {
         // make base here
         // json::Document doc = json::Load(std::cin);
-        std::ifstream input_base_requests("s14_1_opentest_3_make_base.json");
+        std::ifstream input_base_requests("s14_1_opentest_1_make_base.json");
         json::Document doc = json::Load(input_base_requests);
         json_reader::JsonReader reader(doc);
 
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
         {
         // process requests here
         // json::Document doc = json::Load(std::cin);
-        std::ifstream input_base_requests("s14_1_opentest_3_process_requests.json");
+        std::ifstream input_base_requests("s14_1_opentest_1_process_requests.json");
         json::Document doc = json::Load(input_base_requests);
         json_reader::JsonReader reader(doc);
 
@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
         RequestHandler handler(cat, renderer, router, transport_router);
 
         json::Document result = reader.ProcessStatRequests(handler);
-        std::ofstream output_result("s14_1_opentest_3_answer_my.json");
+        std::ofstream output_result("s14_1_opentest_1_answer_my.json");
         json::Print(result, output_result);
         //json::Print(result, std::cout);
         }
