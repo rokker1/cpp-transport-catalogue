@@ -11,16 +11,22 @@
 
 namespace Serialize {
 
+struct SerializeSettings {
+    std::string file;
+};
+
 class Serializer {
 
 public:
     Serializer() = delete;
     Serializer(const catalogue::TransportCatalogue& catalogue,
                 const catalogue::RoutingSettings& routing_settings,
-                const renderer::RenderSettings& render_settings)
+                const renderer::RenderSettings& render_settings,
+                const SerializeSettings serialization_settings)
         : catalogue_(catalogue)
         , routing_settings_(routing_settings)
         , render_settings_(render_settings)
+        , serialize_settings_(serialization_settings)
         
     {
         // Заполнить pb_catalogue_
@@ -98,12 +104,19 @@ public:
 
         pb_base_.SerializeToOstream(&out);
     }
+
+    void Save() const {
+        std::ofstream out(std::filesystem::path(serialize_settings_.file), std::ios::binary);
+        pb_base_.SerializeToOstream(&out);
+    }
     
 private:
     const catalogue::TransportCatalogue& catalogue_;
     const catalogue::RoutingSettings& routing_settings_;
     const renderer::RenderSettings& render_settings_;
+    const SerializeSettings serialize_settings_;
     tc_pb::TransportBase pb_base_;
+
 
     struct RenderSettingsColorVisitor {
         tc_pb::Color& pb_color;
@@ -187,6 +200,18 @@ public:
 
         pb_base_.ParseFromIstream(&input_file);
     }
+    Deserializer(SerializeSettings settings)
+        : open_path_(std::filesystem::path(settings.file))
+        , serialize_settings_(settings)
+
+    {
+        std::ifstream input_file(open_path_, std::ios::binary);
+        if(!input_file) {
+            throw std::runtime_error("Can't open file? bad path?");
+        }
+
+        pb_base_.ParseFromIstream(&input_file);
+    }
 
     catalogue::TransportCatalogue GetTransportCatalogue() const;
     catalogue::RoutingSettings GetRoutingSettings() const;
@@ -196,6 +221,7 @@ private:
     std::filesystem::path open_path_;
 
     tc_pb::TransportBase pb_base_;
+    SerializeSettings serialize_settings_;
 
     static svg::Color ExtractSVGColorFromPBColor(tc_pb::Color pb_color);
 };

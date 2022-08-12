@@ -23,6 +23,8 @@ RequestHandler::RequestHandler(const TransportCatalogue& db, renderer::MapRender
 {
 }
 
+
+
 std::string RequestHandler::RenderMap() {
     std::deque<const Bus*> buses = db_.GetBusesSorted();
     renderer_.RenderRoutes(buses);
@@ -59,3 +61,4 @@ const Bus* RequestHandler::GetBusByEdgeIndex(graph::EdgeId edge_id) const {
 const Stop* RequestHandler::GetStopByVertexIndex(graph::VertexId vertex_id) const {
     return t_router_.GetStopByVertexIndex(vertex_id);
 }
+

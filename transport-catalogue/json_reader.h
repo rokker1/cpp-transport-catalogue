@@ -18,6 +18,7 @@
 #include "json_builder.h"
 #include "request_handler.h"
 #include "transport_router.h"
+#include "serialization.h"
 
 
 namespace json_reader {
@@ -56,6 +57,9 @@ public:
     // ---- routing ----
     catalogue::RoutingSettings ReadRoutingSettings(const json::Document& document) const;
     void SetRoutingSettings(catalogue::RoutingSettings settings, catalogue::TransportCatalogue& catalogue) const;
+
+    // ---- serialization ----
+    Serialize::SerializeSettings ReadSerializeSettings(const json::Document& document) const;
 private:
     std::deque<AddStopRequest> add_stop_requests_;
     std::deque<AddBusRequest> add_bus_requests_;

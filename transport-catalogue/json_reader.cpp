@@ -337,4 +337,15 @@ void JsonReader::Fill(catalogue::TransportCatalogue& catalogue, catalogue::Trans
         router.AddBusEdges(name);
     }  
 }
+
+Serialize::SerializeSettings JsonReader::ReadSerializeSettings(const json::Document& document) const {
+    Serialize::SerializeSettings settings;
+    assert(document.GetRoot().IsDict());
+    assert(document.GetRoot().AsDict().count("serialization_settings") != 0);
+
+    
+    auto file = document.GetRoot().AsDict().at("serialization_settings");
+    
+    return settings;
+}
 }
