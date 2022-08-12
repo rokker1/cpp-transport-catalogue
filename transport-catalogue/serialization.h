@@ -196,6 +196,8 @@ private:
     std::filesystem::path open_path_;
 
     tc_pb::TransportBase pb_base_;
+
+    static svg::Color ExtractSVGColorFromPBColor(tc_pb::Color pb_color);
 };
 
 } // namespace Serialize
