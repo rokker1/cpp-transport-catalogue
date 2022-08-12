@@ -149,10 +149,7 @@ svg::Color Deserializer::ExtractSVGColorFromPBColor(tc_pb::Color pb_color) {
     svg::Color result;
 
     if(pb_color.is_initialized()) {
-        if(pb_color.has_string_color()) {
-            result = pb_color.string_color();
-
-        } else if(pb_color.has_rgb_color()) {
+        if(pb_color.has_rgb_color()) {
 
             result = svg::Rgb{
                 static_cast<uint8_t>(pb_color.rgb_color().red()), 
@@ -168,7 +165,7 @@ svg::Color Deserializer::ExtractSVGColorFromPBColor(tc_pb::Color pb_color) {
                 pb_color.rgba_color().opacity()
             };
         } else {
-            throw std::runtime_error("Bad value in protobuf Color!");
+            result = pb_color.string_color();
         }
     }
 

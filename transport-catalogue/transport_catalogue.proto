@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package tc_pb;
 
+
 enum BusType {
     ORDINARY = 0;
     CYCLED = 1;
@@ -62,9 +63,10 @@ message Rgba {
 }
 
 message Color {
-    optional Rgb rgb_color = 1;
-    optional Rgba rgba_color = 2;
-    optional string string_color = 3;
+
+    Rgb rgb_color = 1;
+    Rgba rgba_color = 2;
+    string string_color = 3;
     bool is_initialized = 4;
 }
 

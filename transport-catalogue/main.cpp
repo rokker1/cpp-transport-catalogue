@@ -26,7 +26,9 @@ int main(int argc, char* argv[]) {
     // if (mode == "make_base"sv) {
         {
         // make base here
-        json::Document doc = json::Load(std::cin);
+        // json::Document doc = json::Load(std::cin);
+        std::ifstream input_base_requests("s14_1_opentest_3_make_base.json");
+        json::Document doc = json::Load(input_base_requests);
         json_reader::JsonReader reader(doc);
 
         catalogue::TransportCatalogue cat;
@@ -53,7 +55,9 @@ int main(int argc, char* argv[]) {
     // } else if (mode == "process_requests"sv) {
         {
         // process requests here
-        json::Document doc = json::Load(std::cin);
+        // json::Document doc = json::Load(std::cin);
+        std::ifstream input_base_requests("s14_1_opentest_3_process_requests.json");
+        json::Document doc = json::Load(input_base_requests);
         json_reader::JsonReader reader(doc);
 
         Serialize::Deserializer deserializer(reader.ReadSerializeSettings(doc));
@@ -70,7 +74,9 @@ int main(int argc, char* argv[]) {
         RequestHandler handler(cat, renderer, router, transport_router);
 
         json::Document result = reader.ProcessStatRequests(handler);
-        json::Print(result, std::cout);
+        std::ofstream output_result("s14_1_opentest_3_answer_my.json");
+        json::Print(result, output_result);
+        //json::Print(result, std::cout);
         }
 
 
