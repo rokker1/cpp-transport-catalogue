@@ -171,3 +171,27 @@ private:
 
 
 };
+
+class Deserializer {
+public:
+    Deserializer() = delete;
+    Deserializer(const std::filesystem::path& p)
+        : open_path_(p)
+    {
+        std::ifstream input_file(open_path_, std::ios::binary);
+        if(!input_file) {
+            throw std::runtime_error("Can't open file? bad path?");
+        }
+
+        pb_base_.ParseFromIstream(&input_file);
+    }
+
+    catalogue::TransportCatalogue&& GetTransportCatalogue() const;
+    catalogue::RoutingSettings GetRoutingSettings() const;
+    renderer::RenderSettings GetRenderSettings() const;
+
+private:
+    std::filesystem::path open_path_;
+
+    tc_pb::TransportBase pb_base_;
+};
