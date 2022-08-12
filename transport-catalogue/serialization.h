@@ -9,6 +9,8 @@
 #include <iostream>
 #include <variant>
 
+namespace Serialize {
+
 class Serializer {
 
 public:
@@ -186,7 +188,7 @@ public:
         pb_base_.ParseFromIstream(&input_file);
     }
 
-    catalogue::TransportCatalogue&& GetTransportCatalogue() const;
+    catalogue::TransportCatalogue GetTransportCatalogue() const;
     catalogue::RoutingSettings GetRoutingSettings() const;
     renderer::RenderSettings GetRenderSettings() const;
 
@@ -195,3 +197,5 @@ private:
 
     tc_pb::TransportBase pb_base_;
 };
+
+} // namespace Serialize

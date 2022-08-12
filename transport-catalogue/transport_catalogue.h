@@ -1,4 +1,5 @@
 #pragma once
+
 #include <algorithm>
 #include <deque>
 #include <string>
@@ -16,6 +17,7 @@
 #include <cmath>
 #include "domain.h"
 #include "router.h"
+
 
 
 namespace catalogue
@@ -60,7 +62,7 @@ struct RouteDistanceHasher {
 
 class TransportCatalogue {
 public:
-
+    
     TransportCatalogue() = default;
     // TransportCatalogue(RoutingSettings routing_settings);
 
@@ -89,7 +91,11 @@ public:
     const std::deque<Bus>& GetBuses() const;
     const std::unordered_map<std::pair<const Stop*, const Stop*>, uint64_t, RouteDistanceHasher>& GetIntervalsToDistance() const;
     
+    void SetStops(std::deque<Stop>&& stops);
+    void SetStopnameToStop(std::map<std::string_view, const Stop*>&& stopname_to_stop);
+
 private:
+    
     //все остановки в базе данных
     std::deque<Stop> stops_; 
     //индексация остановок -> указатель на остановку
@@ -111,8 +117,8 @@ private:
     BusStat ComputeBusInfo(std::string_view name) const;
 
     friend class TransportRouter;
-    friend class Serializer;
-
+    
+    
     // переменные счетчики для индексации
     // существуют в пределах экземпляра
     int stop_count_ = 0;

@@ -187,6 +187,14 @@ const std::unordered_map<std::pair<const Stop*, const Stop*>, uint64_t, RouteDis
 TransportCatalogue::GetIntervalsToDistance() const {
     return intervals_to_distance_;
 }
+
+void TransportCatalogue::SetStops(std::deque<Stop>&& stops) {
+    stops_.swap(stops);
+}
+
+void TransportCatalogue::SetStopnameToStop(std::map<std::string_view, const Stop*>&& stopname_to_stop) {
+    stopname_to_stop_ = stopname_to_stop;
+}
 } // namespace catalogue
 
 

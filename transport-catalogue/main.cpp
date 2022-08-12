@@ -57,7 +57,7 @@ int main() {
         renderer::MapRenderer renderer(reader.GetRenderSettings(), cat.GetBusesSorted());
 
         // ---- serialization moment! ++++
-        Serializer serializer_2000(
+        Serialize::Serializer serializer_2000(
             cat,
             transport_router.GetRoutingSettings(),
             renderer.GetRenderSettings()
