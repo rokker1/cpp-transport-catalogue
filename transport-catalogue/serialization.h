@@ -94,9 +94,9 @@ public:
     }
 
     void SaveTo(const std::filesystem::path& path) const {
-        std::fstream out(path, std::ios::binary);
+        std::ofstream out(path, std::ios::binary);
 
-        pb_base_.SerializePartialToOstream(&out);
+        pb_base_.SerializeToOstream(&out);
     }
     
 private:

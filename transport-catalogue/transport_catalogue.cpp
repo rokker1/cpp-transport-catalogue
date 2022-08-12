@@ -195,6 +195,20 @@ void TransportCatalogue::SetStops(std::deque<Stop>&& stops) {
 void TransportCatalogue::SetStopnameToStop(std::map<std::string_view, const Stop*>&& stopname_to_stop) {
     stopname_to_stop_ = stopname_to_stop;
 }
+
+
+void TransportCatalogue::SetBuses(std::deque<Bus>&& buses) {
+    buses_.swap(buses);
+}
+void TransportCatalogue::SetBusnameToBus(std::map<std::string_view, const Bus*>&& busname_to_bus) {
+    busname_to_bus_ = busname_to_bus;
+}
+void TransportCatalogue::SetStopsToBuses(std::unordered_map<const Stop*, std::set<const Bus*>>&& stops_to_buses) {
+    stops_to_buses_ = stops_to_buses;
+}
+void TransportCatalogue::SetIntervalsToDistance(std::unordered_map<std::pair<const Stop*, const Stop*>, uint64_t, catalogue::RouteDistanceHasher>&& intervals_to_distance) {
+    intervals_to_distance_ = intervals_to_distance;
+}
 } // namespace catalogue
 
 

@@ -57,6 +57,48 @@ catalogue::TransportCatalogue Deserializer::GetTransportCatalogue() const {
 
             busname_to_bus[std::string_view(emlplaced.name_)] = &(emlplaced);
         }
+
+        result.SetBuses(std::move(buses));
+        result.SetBusnameToBus(std::move(busname_to_bus));
+    }
+    {
+        // stops_to_buses_
+        std::unordered_map<const Stop*, std::set<const Bus*>> stops_to_buses;
+
+        for(const auto& stop_to_buses : pb_catalogue.stops_to_buses()) {
+            int stop_id = stop_to_buses.stop_id();
+            // по индексу находим указатель на остановку
+            const Stop* stop_ptr = &(result.GetStops().at(stop_id));
+            assert(stop_id == stop_ptr->id);
+
+            std::set<const Bus*> current_stop_buses;
+            for(int bus_id : stop_to_buses.bus_id()) {
+                const Bus* bus_ptr = &(result.GetBuses().at(bus_id));
+                assert(bus_id == bus_ptr->id);
+                stops_to_buses[stop_ptr].insert(bus_ptr);
+            }
+        }
+
+        result.SetStopsToBuses(std::move(stops_to_buses));
+    }
+    {
+        // intervals_to_distance_
+        std::unordered_map<std::pair<const Stop*, const Stop*>, uint64_t, catalogue::RouteDistanceHasher> intervals_to_distance;
+
+        for(const auto& interval : pb_catalogue.intervals_to_distance()) {
+            int from_id = interval.from_id();
+            int to_id = interval.to_id();
+            int64_t distance = interval.distance();
+
+            const Stop* stop_ptr_from = &(result.GetStops().at(from_id));
+            assert(from_id == stop_ptr_from->id);
+            const Stop* stop_ptr_to = &(result.GetStops().at(to_id));
+            assert(to_id == stop_ptr_to->id);
+
+            intervals_to_distance[{stop_ptr_from, stop_ptr_to}] = distance;
+        }
+
+        result.SetIntervalsToDistance(std::move(intervals_to_distance));
     }
 
 

@@ -62,6 +62,10 @@ int main() {
             transport_router.GetRoutingSettings(),
             renderer.GetRenderSettings()
         );
+        serializer_2000.SaveTo("debug_serialize.bin");
+        Serialize::Deserializer deserializer("debug_serialize.bin");
+        catalogue::TransportCatalogue second_catalogue(std::move(deserializer.GetTransportCatalogue()));
+
 
         RequestHandler handler(cat, renderer, router, transport_router);
         // ------------------------------------------ stage 2

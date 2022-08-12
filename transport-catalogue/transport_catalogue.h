@@ -93,6 +93,10 @@ public:
     
     void SetStops(std::deque<Stop>&& stops);
     void SetStopnameToStop(std::map<std::string_view, const Stop*>&& stopname_to_stop);
+    void SetBuses(std::deque<Bus>&& buses);
+    void SetBusnameToBus(std::map<std::string_view, const Bus*>&& busname_to_bus);
+    void SetStopsToBuses(std::unordered_map<const Stop*, std::set<const Bus*>>&& stops_to_buses);
+    void SetIntervalsToDistance(std::unordered_map<std::pair<const Stop*, const Stop*>, uint64_t, catalogue::RouteDistanceHasher>&& intervals_to_distance);
 
 private:
     
