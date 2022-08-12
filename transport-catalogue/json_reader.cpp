@@ -110,8 +110,11 @@ svg::Color JsonReader::ReadColor(const json::Node& node) const {
 JsonReader::JsonReader(json::Document document) 
     : document_(document)
 {
-    //ProcessBaseRequests(document_, catalogue_); 
-    ReadBaseRequests(document);
+    //ProcessBaseRequests(document_, catalogue_);
+    if(document.GetRoot().AsDict().count("base_requests")) {
+        ReadBaseRequests(document);
+    }
+
 }
 
 renderer::RenderSettings JsonReader::GetRenderSettings() const {
@@ -344,7 +347,7 @@ Serialize::SerializeSettings JsonReader::ReadSerializeSettings(const json::Docum
     assert(document.GetRoot().AsDict().count("serialization_settings") != 0);
 
     
-    auto file = document.GetRoot().AsDict().at("serialization_settings");
+    settings.file = document.GetRoot().AsDict().at("serialization_settings").AsDict().at("file").AsString();
     
     return settings;
 }
