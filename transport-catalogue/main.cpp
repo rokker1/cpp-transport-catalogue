@@ -32,7 +32,8 @@ int main(int argc, char* argv[]) {
 
         catalogue::TransportCatalogue cat;
         catalogue::TransportRouter transport_router(
-            reader.ReadRoutingSettings(doc), 
+            {},
+            //reader.ReadRoutingSettings(doc), 
             cat);
         // заполнение справочника и роутера
         reader.Fill(cat, transport_router);
@@ -43,8 +44,10 @@ int main(int argc, char* argv[]) {
         // ---- serialization moment! ++++
         Serialize::Serializer serializer_2000(
             cat,
-            transport_router.GetRoutingSettings(),
-            reader.GetRenderSettings(),
+            {},
+            //transport_router.GetRoutingSettings(),
+            {},
+            //reader.GetRenderSettings(),
             reader.ReadSerializeSettings(doc)
         );
         serializer_2000.Save();
@@ -59,10 +62,14 @@ int main(int argc, char* argv[]) {
         catalogue::TransportCatalogue cat = deserializer.GetTransportCatalogue();
 
         catalogue::TransportRouter transport_router(
-            deserializer.GetRoutingSettings(),
+            {},
+            // deserializer.GetRoutingSettings(),
             cat
         );
-        renderer::MapRenderer renderer(deserializer.GetRenderSettings(), cat.GetBusesSorted());
+        renderer::MapRenderer renderer(
+            {},
+            //deserializer.GetRenderSettings(), 
+            cat.GetBusesSorted());
         graph::Router<BusRouteWeight> router(transport_router.GetRouteGraph<BusRouteWeight>());
 
         RequestHandler handler(cat, renderer, router, transport_router);
