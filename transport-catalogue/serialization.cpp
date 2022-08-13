@@ -6,7 +6,7 @@ namespace Serialize
 catalogue::TransportCatalogue Deserializer::GetTransportCatalogue() const {
     catalogue::TransportCatalogue result;
    
-    const tc_pb::transport_catalogue& pb_catalogue = pb_base_.cat();
+    const tc_pb::TransportCatalogue& pb_catalogue = pb_base_.cat();
     
     {
         // остановки

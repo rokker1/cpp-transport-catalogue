@@ -30,7 +30,7 @@ public:
         
     {
         // Заполнить pb_catalogue_
-        tc_pb::transport_catalogue pb_catalogue_;
+        tc_pb::TransportCatalogue pb_catalogue_;
         // остановки
         for (const auto& stop : catalogue_.GetStops()) {
             tc_pb::Stop pb_stop;

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 # set the project name
 project(transport-catalogue CXX)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_PREFIX_PATH ~/source/yp-cpp/s14/4.protobuf/2.protobuf_install/protobuf_package)
+#set(CMAKE_PREFIX_PATH ~/source/yp-cpp/s14/4.protobuf/2.protobuf_install/protobuf_package)
 # Эта команда найдёт собранный нами пакет Protobuf.
 # REQUIRED означает, что библиотека обязательна.
 # Путь для поиска укажем в параметрах команды cmake.

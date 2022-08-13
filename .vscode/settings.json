@@ -64,5 +64,6 @@
         "stop_token": "cpp",
         "thread": "cpp"
     },
-    "cmake.sourceDirectory": "${workspaceFolder}/transport-catalogue"
+    "cmake.sourceDirectory": "${workspaceFolder}/transport-catalogue",
+    "cmake.generator": "MinGW Makefiles"
 }

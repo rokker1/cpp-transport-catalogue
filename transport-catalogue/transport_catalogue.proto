@@ -37,7 +37,7 @@ message IntervalToDistance {
     int64 distance = 3;
 }
 
-message transport_catalogue {
+message TransportCatalogue {
     repeated Stop stops = 1;
     repeated Bus buses = 2;
     repeated StopToBuses stops_to_buses = 3;
@@ -96,7 +96,7 @@ message RoutingSettings {
 }
 
 message TransportBase {
-    transport_catalogue cat = 1;
+    TransportCatalogue cat = 1;
     RoutingSettings routing_settings = 2;
     RenderSettings rendder_settings = 3;
 }
