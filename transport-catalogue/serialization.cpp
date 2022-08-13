@@ -135,7 +135,7 @@ renderer::RenderSettings Deserializer::GetRenderSettings() const {
         pb_render_settings.stop_label_offset().y(),
     };
 
-    result.underlayer_color = std::move(ExtractSVGColorFromPBColor(pb_render_settings.underlayer_color()));
+    result.underlayer_color = ExtractSVGColorFromPBColor(pb_render_settings.underlayer_color());
     result.underlayer_width = pb_render_settings.underlayer_width();
 
     for(const auto& pb_color : pb_render_settings.color_palette()) {

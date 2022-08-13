@@ -170,6 +170,7 @@ private:
 
         tc_pb::Color pb_color;
         visit(RenderSettingsColorVisitor{pb_color}, render_settings_.underlayer_color);
+        *pb_render_settings.mutable_underlayer_color() = pb_color;
 
         pb_render_settings.set_underlayer_width(render_settings_.underlayer_width);
 

@@ -16,69 +16,77 @@ void PrintUsage(std::ostream& stream = std::cerr) {
 }
 
 int main(int argc, char* argv[]) {
-    if (argc != 2) {
-        PrintUsage();
-        return 1;
-    }
+    // if (argc != 2) {
+    //     PrintUsage();
+    //     return 1;
+    // }
 
-    const std::string_view mode(argv[1]);
+    // const std::string_view mode(argv[1]);
 
-    if (mode == "make_base"sv) {
+    // if (mode == "make_base"sv) {
+        {
+            // make base here
+            // json::Document doc = json::Load(std::cin);
+            std::ifstream input_base_requests("s14_2_test_1_make_base.json");
+            json::Document doc = json::Load(input_base_requests);
 
-        // make base here
-        json::Document doc = json::Load(std::cin);
+            json_reader::JsonReader reader(doc);
 
-        json_reader::JsonReader reader(doc);
+            catalogue::TransportCatalogue cat;
+            catalogue::TransportRouter transport_router(
+                {},
+                //reader.ReadRoutingSettings(doc), 
+                cat);
+            // заполнение справочника и роутера
+            reader.Fill(cat, transport_router);
+            //graph::Router<BusRouteWeight> router(transport_router.GetRouteGraph<BusRouteWeight>());
 
-        catalogue::TransportCatalogue cat;
-        catalogue::TransportRouter transport_router(
-            {},
-            //reader.ReadRoutingSettings(doc), 
-            cat);
-        // заполнение справочника и роутера
-        reader.Fill(cat, transport_router);
-        //graph::Router<BusRouteWeight> router(transport_router.GetRouteGraph<BusRouteWeight>());
+            //renderer::MapRenderer renderer(reader.GetRenderSettings(), cat.GetBusesSorted());
 
-        //renderer::MapRenderer renderer(reader.GetRenderSettings(), cat.GetBusesSorted());
+            // ---- serialization moment! ++++
+            Serialize::Serializer serializer_2000(
+                cat,
+                {},
+                //transport_router.GetRoutingSettings(),
+                reader.GetRenderSettings(),
+                reader.ReadSerializeSettings(doc)
+            );
+            serializer_2000.Save();
+        }
 
-        // ---- serialization moment! ++++
-        Serialize::Serializer serializer_2000(
-            cat,
-            {},
-            //transport_router.GetRoutingSettings(),
-            {},
-            //reader.GetRenderSettings(),
-            reader.ReadSerializeSettings(doc)
-        );
-        serializer_2000.Save();
-    } else if (mode == "process_requests"sv) {
+    // } else if (mode == "process_requests"sv) {
+        {
+            // process requests here
+            // json::Document doc = json::Load(std::cin);
+            std::ifstream input_base_requests("s14_2_test_1_process_requests.json");
+            json::Document doc = json::Load(input_base_requests);
+            json_reader::JsonReader reader(doc);
 
-        // process requests here
-        json::Document doc = json::Load(std::cin);
-        json_reader::JsonReader reader(doc);
+            Serialize::Deserializer deserializer(reader.ReadSerializeSettings(doc));
 
-        Serialize::Deserializer deserializer(reader.ReadSerializeSettings(doc));
+            catalogue::TransportCatalogue cat = deserializer.GetTransportCatalogue();
 
-        catalogue::TransportCatalogue cat = deserializer.GetTransportCatalogue();
+            catalogue::TransportRouter transport_router(
+                {},
+                // deserializer.GetRoutingSettings(),
+                cat
+            );
+            renderer::MapRenderer renderer(
+                deserializer.GetRenderSettings(), 
+                cat.GetBusesSorted());
+            graph::Router<BusRouteWeight> router(transport_router.GetRouteGraph<BusRouteWeight>());
 
-        catalogue::TransportRouter transport_router(
-            {},
-            // deserializer.GetRoutingSettings(),
-            cat
-        );
-        renderer::MapRenderer renderer(
-            {},
-            //deserializer.GetRenderSettings(), 
-            cat.GetBusesSorted());
-        graph::Router<BusRouteWeight> router(transport_router.GetRouteGraph<BusRouteWeight>());
+            RequestHandler handler(cat, renderer, router, transport_router);
 
-        RequestHandler handler(cat, renderer, router, transport_router);
+            json::Document result = reader.ProcessStatRequests(handler);
 
-        json::Document result = reader.ProcessStatRequests(handler);
+            std::ofstream output_result("s14_2_test_1_answer_my_Win64.json");
+            json::Print(result, output_result);
+            //json::Print(result, std::cout);
+        }
 
-        json::Print(result, std::cout);
-    } else {
-        PrintUsage();
-        return 1;
-    }
+    // } else {
+    //     PrintUsage();
+    //     return 1;
+    // }
 }
