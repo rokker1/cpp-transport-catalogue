@@ -22,7 +22,7 @@ void TransportRouter::AddStopVertex(const Stop* stop) {
     vertex_index_to_stop_.push_back(stop);
     //Сохраняем только четные ид - приемные остановки, 
     //"исхожящие" вершины можно получить прибавив единицу к ид.
-    // stopname_to_vertex_id_.emplace(stop->name_, vertex_index_to_stop_.size() - 2);
+    stopname_to_vertex_id_.emplace(stop->name_, vertex_index_to_stop_.size() - 2);
 }
 
 void TransportRouter::AddBusWaitEdges() {

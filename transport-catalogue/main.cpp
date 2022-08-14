@@ -67,15 +67,13 @@ int main(int argc, char* argv[]) {
 
             catalogue::TransportCatalogue cat = deserializer.GetTransportCatalogue();
 
-            catalogue::TransportRouter transport_router(
-                
-                deserializer.GetRoutingSettings(),
-                cat
-            );
+            catalogue::TransportRouter transport_router = deserializer.GetTransportRouter(cat);
+
             renderer::MapRenderer renderer(
                 deserializer.GetRenderSettings(), 
                 cat.GetBusesSorted());
-            graph::Router<BusRouteWeight> router(transport_router.GetRouteGraph<BusRouteWeight>());
+
+            graph::Router<BusRouteWeight> router = deserializer.GetRouter(transport_router.GetRouteGraph<BusRouteWeight>());
 
             RequestHandler handler(cat, renderer, router, transport_router);
 

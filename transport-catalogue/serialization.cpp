@@ -176,52 +176,85 @@ catalogue::TransportRouter
 Deserializer::GetTransportRouter(const catalogue::TransportCatalogue& catalogue) const {
     catalogue::TransportRouter result(GetRoutingSettings(), catalogue);
 
-    {
-        graph::DirectedWeightedGraph<BusRouteWeight> route_graph;
-        for(const auto& pb_edge : pb_base_.transport_router().route_graph().edges()) {
-            route_graph.AddEdge(
-                graph::Edge<BusRouteWeight>{
-                    pb_edge.vertex_id_from(),
-                    pb_edge.vertex_id_to(),
-                    BusRouteWeight{
-                        pb_edge.weight().time(),
-                        pb_edge.weight().span()
-                    }
-                }
-            );
-        }
-        // граф построен
-        result.SetRouteGraph(std::move(route_graph));
-    }
-    {
-        std::deque<const Stop*> vertex_index_to_stop;
-        std::map<std::string_view, graph::VertexId> stopname_to_vertex_id;
-
-        for(const int32_t stop_id : pb_base_.transport_router().vertex_index_to_stop()) {
-            const Stop*& emplaced = vertex_index_to_stop.emplace_back(&catalogue.GetStops().at(stop_id));
-
-            // сомнительный код
-            stopname_to_vertex_id[emplaced->name_] = 2 * stop_id;
-        }
-
-        std::deque<const Bus*> edge_index_to_bus;
-        for(auto bus_id : pb_base_.transport_router().edge_index_to_bus()) {
-            if(bus_id.IsInitialized()) {
-                edge_index_to_bus.emplace_back(&catalogue.GetBuses().at(bus_id.bus_id()));
-            }
-        }
-
-        result.SetVertexIndexToStop(std::move(vertex_index_to_stop));
-        result.SetStopnameToVertexId(std::move(stopname_to_vertex_id));
-        result.SetEdgeIndexToBus(std::move(edge_index_to_bus));
-    }
     
+
+    
+    
+    std::deque<const Stop*> vertex_index_to_stop;
+    std::map<std::string_view, graph::VertexId> stopname_to_vertex_id;
+
+    for(const int32_t stop_id : pb_base_.transport_router().vertex_index_to_stop()) {
+        const Stop*& emplaced = vertex_index_to_stop.emplace_back(&catalogue.GetStops().at(stop_id));
+
+        // сомнительный код
+        stopname_to_vertex_id[emplaced->name_] = 2 * stop_id;
+    }
+
+    std::deque<const Bus*> edge_index_to_bus;
+    for(auto bus_id : pb_base_.transport_router().edge_index_to_bus()) {
+        if(bus_id.isinitialized()) {
+            edge_index_to_bus.emplace_back(&catalogue.GetBuses().at(bus_id.bus_id()));
+        } else {
+            edge_index_to_bus.emplace_back(nullptr);
+        }
+    }
+
+    result.SetVertexIndexToStop(std::move(vertex_index_to_stop));
+    result.SetStopnameToVertexId(std::move(stopname_to_vertex_id));
+    result.SetEdgeIndexToBus(std::move(edge_index_to_bus));
+
+    graph::DirectedWeightedGraph<BusRouteWeight> route_graph(vertex_index_to_stop.size());
+    for(const auto& pb_edge : pb_base_.transport_router().route_graph().edges()) {
+        
+        route_graph.AddEdge(
+            graph::Edge<BusRouteWeight>{
+                pb_edge.vertex_id_from(),
+                pb_edge.vertex_id_to(),
+                BusRouteWeight{
+                    pb_edge.weight().time(),
+                    pb_edge.weight().span()
+                }
+            }
+        );
+    }
+    // граф построен
+    result.SetRouteGraph(std::move(route_graph));
+
     return result;
 }
 
-graph::Router<BusRouteWeight> Deserializer::GetRouter() const {
-    graph::Router<BusRouteWeight> result(const graph::DirectedWeightedGraph<BusRouteWeight>& graph
-                                        , graph::Router<BusRouteWeight>::RoutesInternalData&& routes_internal_data);
+graph::Router<BusRouteWeight> Deserializer::GetRouter(const graph::DirectedWeightedGraph<BusRouteWeight>& graph) const {
+    
+    graph::Router<BusRouteWeight>::RoutesInternalData routes_internal_data;
+    routes_internal_data.resize(graph.GetVertexCount());
+
+    const tc_pb::Router& pb_router = pb_base_.router();
+    size_t from_index = 0;
+    for(const tc_pb::RouteInternalDataRow pb_route_internal_data_row : pb_router.routes_internal_data()) {
+        routes_internal_data[from_index].resize(graph.GetVertexCount());
+        size_t to_index = 0;
+        for(const tc_pb::RouteInternalData& pb_route_internal_data : pb_route_internal_data_row.route_internal_data_row()) {
+            if(pb_route_internal_data.has_weight()) {
+                routes_internal_data[from_index][to_index] = {
+                    {pb_route_internal_data.weight().time(), pb_route_internal_data.weight().span()},
+                    std::nullopt
+                };
+                // routes_internal_data[from_index][to_index].value().weight.time = pb_route_internal_data.weight().time();
+                // routes_internal_data[from_index][to_index].value().weight.span = pb_route_internal_data.weight().span();
+                ;
+                if(pb_route_internal_data.has_prev_edge()) {
+                    routes_internal_data[from_index][to_index].value().prev_edge = pb_route_internal_data.prev_edge().prev_edge_id();
+                    ;
+                }
+            }
+
+            ++to_index;
+        }
+
+        ++from_index;
+    }
+    
+    graph::Router<BusRouteWeight> result(graph, std::move(routes_internal_data));
 
     return result;
 }

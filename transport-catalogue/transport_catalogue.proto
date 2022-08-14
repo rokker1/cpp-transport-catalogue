@@ -126,6 +126,7 @@ message DirectedWeightedGraph {
 
 message BusId {
     int32 bus_id = 1;
+    bool IsInitialized = 2;
 }
 
 message TransportRouter {

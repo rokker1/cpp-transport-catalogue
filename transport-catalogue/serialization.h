@@ -229,7 +229,14 @@ private:
             if(bus) {
                 tc_pb::BusId pb_bus_id;
                 pb_bus_id.set_bus_id(bus->id);
+                pb_bus_id.set_isinitialized(true);
                 pb_transport_router.mutable_edge_index_to_bus()->Add(std::move(pb_bus_id));
+
+            } else {
+                tc_pb::BusId pb_bus_id;
+                pb_bus_id.set_isinitialized(false);
+                pb_transport_router.mutable_edge_index_to_bus()->Add(std::move(pb_bus_id));
+                
             }
         }
         // pb_transport_router заполнен
@@ -296,7 +303,7 @@ public:
     renderer::RenderSettings GetRenderSettings() const;
 
     catalogue::TransportRouter GetTransportRouter(const catalogue::TransportCatalogue& catalogue) const;
-    graph::Router<BusRouteWeight> GetRouter() const;
+    graph::Router<BusRouteWeight> GetRouter(const graph::DirectedWeightedGraph<BusRouteWeight>& graph) const;
 private:
     std::filesystem::path open_path_;
 
