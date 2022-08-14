@@ -99,4 +99,66 @@ message TransportBase {
     TransportCatalogue cat = 1;
     RoutingSettings routing_settings = 2;
     RenderSettings rendder_settings = 3;
+
+    TransportRouter transport_router = 4;
+    Router router = 5;
 }
+
+message BusRouteWeight {
+    double time = 1;
+    int32 span = 2;
+}
+
+message Edge {
+    uint32 vertex_id_from = 1;
+    uint32 vertex_id_to = 2;
+    BusRouteWeight weight = 3;
+}
+
+message IncidenceList {
+    repeated uint32 edge_id = 1;
+}
+
+message DirectedWeightedGraph {
+    repeated Edge edges = 1;
+    repeated IncidenceList incidence_lists = 2;
+}
+
+message BusId {
+    int32 bus_id = 1;
+}
+
+message TransportRouter {
+    DirectedWeightedGraph route_graph = 1;
+
+    // index = VertexId
+    // int32 здесь - это stop_id - просто порядковый номер в деке в transport_catalogue
+    repeated int32 vertex_index_to_stop = 2; 
+
+    // index = EdgeId
+    // int32 здесь - это bus_id - просто порядковый номер в деке в transport_catalogue
+    // пользовательский тип - optional!
+    repeated BusId edge_index_to_bus = 3;
+
+    // std::map<std::string_view, graph::VertexId> stopname_to_vertex_id_; нужен здесь?
+}
+
+// Сделан пользовательский тип, поскольку тип опциональный 
+// Аналог std::optional
+message PrevEdgeId {
+    uint32 prev_edge_id = 1;
+}
+
+message RouteInternalData {
+    BusRouteWeight weight = 1;
+    PrevEdgeId prev_edge = 2;
+}
+
+message RouteInternalDataRow {
+    repeated RouteInternalData route_internal_data_row = 1;
+}
+
+message Router {
+    repeated RouteInternalDataRow routes_internal_data = 1;
+}
+

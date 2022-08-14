@@ -20,14 +20,16 @@ class Serializer {
 public:
     Serializer() = delete;
     Serializer(const catalogue::TransportCatalogue& catalogue,
-                const catalogue::RoutingSettings& routing_settings,
+                const catalogue::TransportRouter& transport_router,
                 const renderer::RenderSettings& render_settings,
-                const SerializeSettings serialization_settings)
+                const SerializeSettings serialization_settings,
+                const graph::Router<BusRouteWeight>& router)
         : catalogue_(catalogue)
-        , routing_settings_(routing_settings)
+        , routing_settings_(transport_router.GetRoutingSettings())
         , render_settings_(render_settings)
         , serialize_settings_(serialization_settings)
-        
+        , transport_router_(transport_router)
+        , router_(router)
     {
         // Заполнить pb_catalogue_
         tc_pb::TransportCatalogue pb_catalogue_;
@@ -97,6 +99,10 @@ public:
         FillRoutingSettings();
 
         FillRenderSettings();
+
+        FillTransportRouter();
+
+        FillRouter();
     }
 
     void SaveTo(const std::filesystem::path& path) const {
@@ -115,6 +121,8 @@ private:
     const catalogue::RoutingSettings& routing_settings_;
     const renderer::RenderSettings& render_settings_;
     const SerializeSettings serialize_settings_;
+    const catalogue::TransportRouter& transport_router_;
+    const graph::Router<BusRouteWeight>& router_;
     tc_pb::TransportBase pb_base_;
 
 
@@ -184,7 +192,76 @@ private:
         *pb_base_.mutable_rendder_settings() = std::move(pb_render_settings);
     }
 
+    void FillTransportRouter() {
+        tc_pb::TransportRouter pb_transport_router;
 
+        const graph::DirectedWeightedGraph<BusRouteWeight>& g = transport_router_.GetRouteGraph<BusRouteWeight>();
+        for(const auto& edge : g.GetEdges()) {
+            tc_pb::Edge pb_edge;
+            pb_edge.set_vertex_id_from(edge.from);
+            pb_edge.set_vertex_id_to(edge.to);
+
+            tc_pb::BusRouteWeight pb_weight;
+            pb_weight.set_span(edge.weight.span);
+            pb_weight.set_time(edge.weight.time);
+
+            *pb_edge.mutable_weight() = pb_weight;
+
+            pb_transport_router.mutable_route_graph()->mutable_edges()->Add(std::move(pb_edge));
+        }
+
+        for(const std::vector<graph::EdgeId>& incidence_list : g.GetIncidenceLists()) {
+            // одна строка с таблице - ее индекс соответствует vertex_id - from
+            tc_pb::IncidenceList pb_incidence_list;
+
+            for(graph::EdgeId edge_id : incidence_list) {
+                pb_incidence_list.add_edge_id(edge_id);
+            }
+
+            pb_transport_router.mutable_route_graph()->mutable_incidence_lists()->Add(std::move(pb_incidence_list));
+        }
+        // граф заполнен
+
+        for(const Stop* stop : transport_router_.GetVertexIndexToStop()) {
+            pb_transport_router.add_vertex_index_to_stop(stop->id);
+        }
+        for(const Bus* bus : transport_router_.GetEdgeIndexToBus()) {
+            if(bus) {
+                tc_pb::BusId pb_bus_id;
+                pb_bus_id.set_bus_id(bus->id);
+                pb_transport_router.mutable_edge_index_to_bus()->Add(std::move(pb_bus_id));
+            }
+        }
+        // pb_transport_router заполнен
+        *pb_base_.mutable_transport_router() = std::move(pb_transport_router);
+    }
+
+    void FillRouter() {
+        tc_pb::Router pb_router;
+
+        for (const auto& row : router_.GetRoutesInternalData()) {
+            tc_pb::RouteInternalDataRow pb_row;
+
+            for(const auto& data : row) {
+                if(data.has_value()) {
+                    tc_pb::RouteInternalData pb_data;
+
+                    pb_data.mutable_weight()->set_span(data->weight.span);
+                    pb_data.mutable_weight()->set_time(data->weight.time);
+
+                    if(data->prev_edge.has_value()) {
+                        pb_data.mutable_prev_edge()->set_prev_edge_id(data->prev_edge.value());
+                    }
+
+                    pb_row.mutable_route_internal_data_row()->Add(std::move(pb_data));
+                }
+            }
+
+            pb_router.mutable_routes_internal_data()->Add(std::move(pb_row));
+        }
+
+        *pb_base_.mutable_router() = std::move(pb_router);
+    }
 
 };
 
@@ -218,6 +295,8 @@ public:
     catalogue::RoutingSettings GetRoutingSettings() const;
     renderer::RenderSettings GetRenderSettings() const;
 
+    catalogue::TransportRouter GetTransportRouter(const catalogue::TransportCatalogue& catalogue) const;
+    graph::Router<BusRouteWeight> GetRouter() const;
 private:
     std::filesystem::path open_path_;
 

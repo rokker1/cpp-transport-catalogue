@@ -22,7 +22,7 @@ void TransportRouter::AddStopVertex(const Stop* stop) {
     vertex_index_to_stop_.push_back(stop);
     //Сохраняем только четные ид - приемные остановки, 
     //"исхожящие" вершины можно получить прибавив единицу к ид.
-    stopname_to_vertex_id_.emplace(stop->name_, vertex_index_to_stop_.size() - 2);
+    // stopname_to_vertex_id_.emplace(stop->name_, vertex_index_to_stop_.size() - 2);
 }
 
 void TransportRouter::AddBusWaitEdges() {
@@ -76,4 +76,24 @@ const Stop* TransportRouter::GetStopByVertexIndex(graph::VertexId vertex_id) con
     return vertex_index_to_stop_[vertex_id];
 }
 
+const std::deque<const Stop*>& TransportRouter::GetVertexIndexToStop() const {
+    return vertex_index_to_stop_;
+}
+
+const std::deque<const Bus*>& TransportRouter::GetEdgeIndexToBus() const {
+    return edge_index_to_bus_;
+}
+
+void TransportRouter::SetRouteGraph(graph::DirectedWeightedGraph<BusRouteWeight>&& route_graph) {
+    route_graph_ = route_graph;
+}
+void TransportRouter::SetVertexIndexToStop(std::deque<const Stop*>&& vertex_index_to_stop) {
+    vertex_index_to_stop_ = vertex_index_to_stop;
+}
+void TransportRouter::SetEdgeIndexToBus(std::deque<const Bus*>&& edge_index_to_bus) {
+    edge_index_to_bus_ = edge_index_to_bus;
+}
+void TransportRouter::SetStopnameToVertexId(std::map<std::string_view, graph::VertexId>&& stopname_to_vertex_id) {
+    stopname_to_vertex_id_ = stopname_to_vertex_id;
+}
 } // namespace catalogue

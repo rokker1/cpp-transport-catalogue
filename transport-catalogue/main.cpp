@@ -27,29 +27,30 @@ int main(int argc, char* argv[]) {
         {
             // make base here
             // json::Document doc = json::Load(std::cin);
-            std::ifstream input_base_requests("s14_2_test_1_make_base.json");
+            std::ifstream input_base_requests("s14_3_test_1_make_base.json");
             json::Document doc = json::Load(input_base_requests);
 
             json_reader::JsonReader reader(doc);
 
             catalogue::TransportCatalogue cat;
             catalogue::TransportRouter transport_router(
-                {},
-                //reader.ReadRoutingSettings(doc), 
+                
+                reader.ReadRoutingSettings(doc), 
                 cat);
             // заполнение справочника и роутера
             reader.Fill(cat, transport_router);
-            //graph::Router<BusRouteWeight> router(transport_router.GetRouteGraph<BusRouteWeight>());
+            graph::Router<BusRouteWeight> router(transport_router.GetRouteGraph<BusRouteWeight>());
 
             //renderer::MapRenderer renderer(reader.GetRenderSettings(), cat.GetBusesSorted());
 
             // ---- serialization moment! ++++
             Serialize::Serializer serializer_2000(
                 cat,
-                {},
-                //transport_router.GetRoutingSettings(),
+                
+                transport_router,
                 reader.GetRenderSettings(),
-                reader.ReadSerializeSettings(doc)
+                reader.ReadSerializeSettings(doc),
+                router
             );
             serializer_2000.Save();
         }
@@ -58,7 +59,7 @@ int main(int argc, char* argv[]) {
         {
             // process requests here
             // json::Document doc = json::Load(std::cin);
-            std::ifstream input_base_requests("s14_2_test_1_process_requests.json");
+            std::ifstream input_base_requests("s14_3_test_1_process_requests.json");
             json::Document doc = json::Load(input_base_requests);
             json_reader::JsonReader reader(doc);
 
@@ -67,8 +68,8 @@ int main(int argc, char* argv[]) {
             catalogue::TransportCatalogue cat = deserializer.GetTransportCatalogue();
 
             catalogue::TransportRouter transport_router(
-                {},
-                // deserializer.GetRoutingSettings(),
+                
+                deserializer.GetRoutingSettings(),
                 cat
             );
             renderer::MapRenderer renderer(
@@ -80,7 +81,7 @@ int main(int argc, char* argv[]) {
 
             json::Document result = reader.ProcessStatRequests(handler);
 
-            std::ofstream output_result("s14_2_test_1_answer_my_Win64.json");
+            std::ofstream output_result("s14_3_test_1_answer_my_Win64.json");
             json::Print(result, output_result);
             //json::Print(result, std::cout);
         }

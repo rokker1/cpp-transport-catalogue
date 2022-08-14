@@ -13,12 +13,12 @@ class TransportRouter {
 private:
     RoutingSettings routing_settings_;
     const TransportCatalogue& cat_;
-    graph::DirectedWeightedGraph<BusRouteWeight> route_graph_;
+    graph::DirectedWeightedGraph<BusRouteWeight> route_graph_; // 1 in proto file
 
     // index = VertexId
-    std::deque<const Stop*> vertex_index_to_stop_;
+    std::deque<const Stop*> vertex_index_to_stop_; // 2 in proto file
     // index = EdgeId
-    std::deque<const Bus*> edge_index_to_bus_;
+    std::deque<const Bus*> edge_index_to_bus_; // 3 in proto file
     //данный словарь хранит ид "приёмных" остановок - с четными ид.
     // size == stops_.size()
     std::map<std::string_view, graph::VertexId> stopname_to_vertex_id_;
@@ -47,6 +47,14 @@ public:
 
     //------------ for serialization purposes
     const RoutingSettings& GetRoutingSettings() const;
+    const std::deque<const Stop*>& GetVertexIndexToStop() const;
+    const std::deque<const Bus*>& GetEdgeIndexToBus() const;
+
+    void SetRouteGraph(graph::DirectedWeightedGraph<BusRouteWeight>&& route_graph);
+    void SetVertexIndexToStop(std::deque<const Stop*>&& vertex_index_to_stop);
+    void SetEdgeIndexToBus(std::deque<const Bus*>&& edge_index_to_bus);
+    void SetStopnameToVertexId(std::map<std::string_view, graph::VertexId>&& stopname_to_vertex_id);
+
 };
 
 template <typename Weight>

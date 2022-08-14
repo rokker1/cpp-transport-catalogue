@@ -172,6 +172,60 @@ svg::Color Deserializer::ExtractSVGColorFromPBColor(tc_pb::Color pb_color) {
     return result;
 }
 
+catalogue::TransportRouter 
+Deserializer::GetTransportRouter(const catalogue::TransportCatalogue& catalogue) const {
+    catalogue::TransportRouter result(GetRoutingSettings(), catalogue);
+
+    {
+        graph::DirectedWeightedGraph<BusRouteWeight> route_graph;
+        for(const auto& pb_edge : pb_base_.transport_router().route_graph().edges()) {
+            route_graph.AddEdge(
+                graph::Edge<BusRouteWeight>{
+                    pb_edge.vertex_id_from(),
+                    pb_edge.vertex_id_to(),
+                    BusRouteWeight{
+                        pb_edge.weight().time(),
+                        pb_edge.weight().span()
+                    }
+                }
+            );
+        }
+        // граф построен
+        result.SetRouteGraph(std::move(route_graph));
+    }
+    {
+        std::deque<const Stop*> vertex_index_to_stop;
+        std::map<std::string_view, graph::VertexId> stopname_to_vertex_id;
+
+        for(const int32_t stop_id : pb_base_.transport_router().vertex_index_to_stop()) {
+            const Stop*& emplaced = vertex_index_to_stop.emplace_back(&catalogue.GetStops().at(stop_id));
+
+            // сомнительный код
+            stopname_to_vertex_id[emplaced->name_] = 2 * stop_id;
+        }
+
+        std::deque<const Bus*> edge_index_to_bus;
+        for(auto bus_id : pb_base_.transport_router().edge_index_to_bus()) {
+            if(bus_id.IsInitialized()) {
+                edge_index_to_bus.emplace_back(&catalogue.GetBuses().at(bus_id.bus_id()));
+            }
+        }
+
+        result.SetVertexIndexToStop(std::move(vertex_index_to_stop));
+        result.SetStopnameToVertexId(std::move(stopname_to_vertex_id));
+        result.SetEdgeIndexToBus(std::move(edge_index_to_bus));
+    }
+    
+    return result;
+}
+
+graph::Router<BusRouteWeight> Deserializer::GetRouter() const {
+    graph::Router<BusRouteWeight> result(const graph::DirectedWeightedGraph<BusRouteWeight>& graph
+                                        , graph::Router<BusRouteWeight>::RoutesInternalData&& routes_internal_data);
+
+    return result;
+}
+
 } // namespace Serialize
 
 
