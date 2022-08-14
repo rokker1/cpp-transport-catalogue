@@ -257,6 +257,7 @@ private:
                     pb_data.mutable_weight()->set_time(data->weight.time);
 
                     if(data->prev_edge.has_value()) {
+                        // error
                         pb_data.mutable_prev_edge()->set_prev_edge_id(data->prev_edge.value());
                     }
 
