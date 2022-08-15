@@ -244,12 +244,16 @@ private:
     }
 
     void FillRouter() {
+
+        using RouteInternalData = graph::Router<BusRouteWeight>::RouteInternalData;
+
         tc_pb::Router pb_router;
 
-        for (const auto& row : router_.GetRoutesInternalData()) {
+        for (const std::vector<std::optional<RouteInternalData>>& row : router_.GetRoutesInternalData()) {
+            
             tc_pb::RouteInternalDataRow pb_row;
 
-            for(const auto& data : row) {
+            for(const std::optional<RouteInternalData>& data : row) {
                 if(data.has_value()) {
                     tc_pb::RouteInternalData pb_data;
 
@@ -257,11 +261,14 @@ private:
                     pb_data.mutable_weight()->set_time(data->weight.time);
 
                     if(data->prev_edge.has_value()) {
-                        // error
                         pb_data.mutable_prev_edge()->set_prev_edge_id(data->prev_edge.value());
                     }
 
                     pb_row.mutable_route_internal_data_row()->Add(std::move(pb_data));
+
+                } else {
+                    //добавление значения по умолчанию
+                    pb_row.add_route_internal_data_row();
                 }
             }
 

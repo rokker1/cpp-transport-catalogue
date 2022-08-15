@@ -16,19 +16,17 @@ void PrintUsage(std::ostream& stream = std::cerr) {
 }
 
 int main(int argc, char* argv[]) {
-    // if (argc != 2) {
-    //     PrintUsage();
-    //     return 1;
-    // }
+     if (argc != 2) {
+        PrintUsage();
+        return 1;
+    }
 
-    // const std::string_view mode(argv[1]);
+    const std::string_view mode(argv[1]);
 
-    // if (mode == "make_base"sv) {
+     if (mode == "make_base"sv) {
         {
             // make base here
-            // json::Document doc = json::Load(std::cin);
-            std::ifstream input_base_requests("s14_3_opentest_2_make_base.json");
-            json::Document doc = json::Load(input_base_requests);
+             json::Document doc = json::Load(std::cin);
 
             json_reader::JsonReader reader(doc);
 
@@ -55,12 +53,11 @@ int main(int argc, char* argv[]) {
             serializer_2000.Save();
         }
 
-    // } else if (mode == "process_requests"sv) {
+    } else if (mode == "process_requests"sv) {
         {
             // process requests here
-            // json::Document doc = json::Load(std::cin);
-            std::ifstream input_base_requests("s14_3_opentest_2_process_requests.json");
-            json::Document doc = json::Load(input_base_requests);
+            json::Document doc = json::Load(std::cin);
+
             json_reader::JsonReader reader(doc);
 
             Serialize::Deserializer deserializer(reader.ReadSerializeSettings(doc));
@@ -79,13 +76,12 @@ int main(int argc, char* argv[]) {
 
             json::Document result = reader.ProcessStatRequests(handler);
 
-            std::ofstream output_result("s14_3_opentest_2_answer_my_Win64.json");
-            json::Print(result, output_result);
-            //json::Print(result, std::cout);
+
+            json::Print(result, std::cout);
         }
 
-    // } else {
-    //     PrintUsage();
-    //     return 1;
-    // }
+    } else {
+         PrintUsage();
+         return 1;
+    }
 }
