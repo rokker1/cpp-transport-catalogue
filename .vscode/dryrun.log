@@ -1,6 +1,0 @@
-make --dry-run --always-make --keep-going --print-directory
-make: Entering directory '/home/alexander/source/cpp-transport-catalogue'
-make: Leaving directory '/home/alexander/source/cpp-transport-catalogue'
- 
-make: *** No targets specified and no makefile found.  Stop.
-
